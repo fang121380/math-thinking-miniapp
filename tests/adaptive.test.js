@@ -46,6 +46,79 @@ test('daily sets are stable per learner and date but differ across learners', ()
   assert.notDeepEqual(first.map((item) => item.id), other.map((item) => item.id));
 });
 
+test('daily selection prioritizes zero mastery and defaults only missing mastery to fifty', () => {
+  const bank = ['choice', 'fill', 'problem'].flatMap((type) => (
+    ['zero', 'low', 'unknown', 'missing', 'high'].map((knowledgePoint) => ({
+      id: `${type}-${knowledgePoint}`,
+      prompt: `${type}: ${knowledgePoint}`,
+      answer: '1',
+      type,
+      difficulty: 2,
+      knowledgePoint,
+      ability: 'calculation',
+      grade: 4,
+      textbookId: 'rjb',
+      term: '上册',
+    }))
+  ));
+  const profile = {
+    grade: 4,
+    textbookId: 'rjb',
+    knowledgeState: {
+      zero: { mastery: 0 },
+      low: { mastery: 20 },
+      missing: {},
+      high: { mastery: 80 },
+    },
+  };
+  const context = { date: '2026-09-17', themeAbility: 'calculation' };
+
+  for (const excluded of [[], ['zero'], ['zero', 'low']]) {
+    const selected = buildDailySet(
+      bank.filter((item) => !excluded.includes(item.knowledgePoint)),
+      profile,
+      context,
+    );
+    const expected = excluded.length === 0 ? ['zero']
+      : excluded.length === 1 ? ['low'] : ['unknown', 'missing'];
+    assert.equal(selected.length, 3);
+    assert.deepEqual(selected.map((item) => item.type).sort(), ['choice', 'fill', 'problem']);
+    assert.ok(selected.every((item) => expected.includes(item.knowledgePoint)),
+      `Expected ${expected}, got ${selected.map((item) => item.knowledgePoint)}`);
+  }
+});
+
+test('zero mastery does not override due review, explicit weaknesses, or fresh question priority', () => {
+  const bank = ['choice', 'fill', 'problem'].flatMap((type) => (
+    ['zero', 'other'].map((knowledgePoint) => ({
+      id: `${type}-${knowledgePoint}`,
+      prompt: `${type}: ${knowledgePoint}`,
+      answer: '1',
+      type,
+      difficulty: 2,
+      knowledgePoint,
+      ability: 'calculation',
+      grade: 4,
+      textbookId: 'rjb',
+      term: '上册',
+    }))
+  ));
+  const zero = { mastery: 0 };
+  const other = { mastery: 80 };
+  const scenarios = [
+    { knowledgeState: { zero, other: { ...other, nextReviewDate: '2026-09-16' } } },
+    { knowledgeState: { zero, other }, weakKnowledgePoints: ['other'] },
+    { knowledgeState: { zero, other }, servedQuestionIds: bank.filter((q) => q.knowledgePoint === 'zero').map((q) => q.id) },
+  ];
+  for (const profile of scenarios) {
+    const selected = buildDailySet(bank, profile, {
+      date: '2026-09-17', themeAbility: 'calculation', missionMode: 'review',
+    });
+    assert.equal(selected.length, 3);
+    assert.ok(selected.every((item) => item.knowledgePoint === 'other'));
+  }
+});
+
 test('daily selection avoids completed variants while alternatives exist', () => {
   const profile = { weakKnowledgePoints: ['division_estimation'], level: 1, completedIds: [] };
   const first = buildDailySet(practiceQuestions, profile, { learnerId: 'learner-a', date: '2026-07-15' });

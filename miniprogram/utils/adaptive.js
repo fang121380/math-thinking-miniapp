@@ -203,8 +203,8 @@ function rankCandidates(candidates, weakKnowledgePoints, completedIds, seedText,
       - Number(weakKnowledgePoints.includes(left.knowledgePoint));
     if (weakDifference) return weakDifference;
 
-    const masteryDifference = Number((knowledgeState[left.knowledgePoint] || {}).mastery || 50)
-      - Number((knowledgeState[right.knowledgePoint] || {}).mastery || 50);
+    const masteryDifference = Number((knowledgeState[left.knowledgePoint] || {}).mastery ?? 50)
+      - Number((knowledgeState[right.knowledgePoint] || {}).mastery ?? 50);
     if (masteryDifference) return masteryDifference;
 
     return 0;
