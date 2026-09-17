@@ -307,6 +307,63 @@ test('generated estimation questions state the rounding target and explain the s
     });
 });
 
+test('grade-four division estimates never present a rounded quotient as an exact equality', () => {
+  const items = topicQuestions(4, 'division_estimation');
+  assert.ok(items.length > 0);
+  for (const item of items) {
+    const explanation = [item.solution.summary, ...item.solution.steps].join(' ');
+    const equalities = [...explanation.matchAll(/(\d+)\s*([×÷])\s*(\d+)\s*=\s*(\d+(?:\.\d+)?)/g)];
+    assert.ok(equalities.length > 0, item.id);
+    for (const [, left, operator, right, result] of equalities) {
+      const expected = operator === '×' ? Number(left) * Number(right) : Number(left) / Number(right);
+      assert.ok(Math.abs(expected - Number(result)) < 1e-10, `${item.id}: ${left}${operator}${right}=${result}`);
+    }
+  }
+});
+
+test('grade-four product rounding explains the actual product before choosing its nearest hundred', () => {
+  const items = topicQuestions(4, 'multiply_estimation');
+  assert.ok(items.length > 0);
+  for (const item of items) {
+    const [, left, right] = item.prompt.match(/(\d+)\s*×\s*(\d+)/);
+    const product = Number(left) * Number(right);
+    const explanation = [item.solution.summary, ...item.solution.steps].join(' ').replace(/\s/g, '');
+    assert.ok(explanation.includes(`${left}×${right}=${product}`), item.id);
+    assert.equal(Number(item.answer), Math.round(product / 100) * 100, item.id);
+  }
+});
+
+test('halfway grade-four estimates state how to choose between equally near multiples', () => {
+  const items = [
+    ...topicQuestions(4, 'division_estimation'),
+    ...topicQuestions(4, 'multiply_estimation'),
+  ];
+  let checked = 0;
+  for (const item of items) {
+    const division = item.knowledgePoint === 'division_estimation';
+    const [left, right] = item.calculationExpression.split(/[×÷]/).map(Number);
+    const value = division ? left / right : left * right;
+    const step = division ? 10 : 100;
+    if (value % step !== step / 2) continue;
+    checked += 1;
+    assert.match(item.prompt, /四舍五入.*较大/, item.id);
+    assert.equal(Number(item.answer), Math.ceil(value / step) * step, item.id);
+  }
+  assert.ok(checked > 0, 'Published variants should exercise the halfway case');
+});
+
+test('generated cube observations specify the row direction and rule out stacking', () => {
+  const items = topicQuestions(4, 'view_from_direction');
+  assert.ok(items.length > 0);
+  for (const item of items) {
+    assert.match(item.prompt, /从左到右/, item.id);
+    assert.match(item.prompt, /不叠放/, item.id);
+    assert.doesNotMatch(item.prompt, /首尾排成/, item.id);
+    const [, count] = item.prompt.match(/(\d+)\s*个同样的小正方体/);
+    assert.equal(Number(item.answer), Number(count), item.id);
+  }
+});
+
 test('generated learner-facing prompts do not stack generic instructions or leave a missing target', () => {
   const duplicatedInstruction = /请(?:画一画或列一列|直接填写)：[\s\S]*(?:请写出想法|请填在横线上)。/;
   const missingProportionTarget = /解比例：[^\n]+，x 。/;

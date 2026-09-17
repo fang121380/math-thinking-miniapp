@@ -2,6 +2,12 @@
 
 Date: 2026-08-11
 
+Follow-up: [2026-09-17 RJB grade-four review](qa/2026-09-17-rjb-grade-4-review.md).
+Primary topics now require a specific edition reference before receiving
+`source-aligned`; the earlier default marking for every primary topic was
+incorrect. References describe historical edition scope, not full coverage of
+the 2024 revision or manual approval of every generated exercise.
+
 ## Scope
 
 This record audits textbook routing metadata used by the primary question bank.

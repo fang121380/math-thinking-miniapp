@@ -1,12 +1,12 @@
 module.exports = {
-  version: '2026.08.14.2',
-  updatedAt: '2026-08-14',
+  version: '2026.09.17.1',
+  updatedAt: '2026-09-17',
   minimumAppVersion: '1.0.0',
   updateEndpoint: '',
   releaseNote: {
-    version: '2026.08.14.2',
+    version: '2026.09.17.1',
     title: '题库已优化',
-    copy: '本次优化了题目表述、难度梯度和教材匹配，今天的练习会重新安排。',
+    copy: '估算题的讲解和观察物体的题意更清楚了，今天的练习会重新安排。',
   },
   edition: { id: 'multi', label: '八版本教材' },
   enabledGrades: [1, 2, 3, 4, 5, 6, 7, 8, 9],

@@ -541,12 +541,15 @@ function createModel(kind, difficulty, serial, options = {}) {
       ? 96 + ((variantSeed * 7) % 804)
       : 2 + ((variantSeed * 7) % leftLimit);
     const right = 2 + ((variantSeed + d) % (grade <= 2 ? 8 : d === 1 ? 5 : 9));
-    const answer = kind === 'multiplyEstimate' ? Math.round((left * right) / 100) * 100 : left * right;
+    const product = left * right;
+    const answer = kind === 'multiplyEstimate' ? Math.round(product / 100) * 100 : product;
+    const tieInstruction = kind === 'multiplyEstimate' && product % 100 === 50
+      ? '若与两个整百数距离相等，按四舍五入取较大的数。' : '';
     return {
-      question: kind === 'multiplyEstimate' ? `${left} × ${right} 的积最接近多少（整百数）？` : `${left} × ${right} 等于多少？`,
+      question: kind === 'multiplyEstimate' ? `${left} × ${right} 的积最接近多少（整百数）？${tieInstruction}` : `${left} × ${right} 等于多少？`,
       expression: `${left} × ${right}`,
       answer: String(answer),
-      reason: kind === 'multiplyEstimate' ? `把 ${left} 看成接近的整十或整百数，估得 ${answer}。` : `${left} × ${right} = ${answer}`,
+      reason: kind === 'multiplyEstimate' ? `先算 ${left} × ${right} = ${product}，再按四舍五入取整百数，得到 ${answer}。` : `${left} × ${right} = ${answer}`,
       ...(kind === 'multiplyEstimate' ? { estimateOptionStep: 100 } : {}),
     };
   }
@@ -564,12 +567,20 @@ function createModel(kind, difficulty, serial, options = {}) {
     const displayedDividend = isDivisionEstimate ? dividend + d : dividend;
     const exactQuotient = displayedDividend / divisor;
     const answer = isDivisionEstimate ? Math.round(exactQuotient / 10) * 10 : quotient;
+    const lower = Math.floor(exactQuotient / 10) * 10;
+    const upper = lower + 10;
+    const lowerProduct = divisor * lower;
+    const upperProduct = divisor * upper;
+    const lowerDistance = displayedDividend - lowerProduct;
+    const upperDistance = upperProduct - displayedDividend;
+    const tied = lowerDistance === upperDistance;
+    const tieInstruction = tied ? '若与两个整十数距离相等，按四舍五入取较大的数。' : '';
     return {
-      question: kind === 'divisionEstimate' ? `${displayedDividend} ÷ ${divisor} 的商最接近多少（整十数）？` : `${dividend} ÷ ${divisor} 等于多少？`,
+      question: kind === 'divisionEstimate' ? `${displayedDividend} ÷ ${divisor} 的商最接近多少（整十数）？${tieInstruction}` : `${dividend} ÷ ${divisor} 等于多少？`,
       expression: `${displayedDividend} ÷ ${divisor}`,
       answer: String(answer),
       reason: kind === 'divisionEstimate'
-        ? `${displayedDividend} ÷ ${divisor} = ${decimal(exactQuotient)}，商最接近 ${answer}。`
+        ? `${divisor} × ${lower} = ${lowerProduct}，${divisor} × ${upper} = ${upperProduct}。${displayedDividend} 与这两个积分别相差 ${lowerDistance} 和 ${upperDistance}，${tied ? '距离相等，按四舍五入取较大的整十数' : '选择距离较近的积所对应的整十数'}，所以填 ${answer}。`
         : `${divisor} × ${quotient} = ${dividend}，所以商是 ${quotient}。`,
       ...(kind === 'divisionEstimate' ? { estimateOptionStep: 10 } : {}),
     };
@@ -631,7 +642,7 @@ function createModel(kind, difficulty, serial, options = {}) {
     if (kind === 'visual') {
       const count = (variationSeed % 300) + d + 2;
       return {
-        question: `把 ${count} 个同样的小正方体首尾排成一排。从正面看，能看到几个小正方形的面？`,
+        question: `把 ${count} 个同样的小正方体从左到右紧挨着摆成一排，不叠放。从这一排的正面看，能看到几个小正方形的面？`,
         answer: String(count),
         reason: `每个小正方体正面露出 1 个正方形的面，一排共能看到 ${count} 个。`,
         options: [String(Math.max(1, count - 1)), String(count), String(count + 1), String(count + 2)],

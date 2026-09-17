@@ -68,6 +68,26 @@ const PRIMARY_EDITION_TOPIC_OVERRIDES = {
         '第2单元 观察物体（二）',
         '02',
       ],
+      average: ['average', '平均数', '下册', '平均数与条形统计图'],
+      two_step_division_problem: ['two_step_division_problem', '两步应用题', '下册', '四则运算'],
+      decimal_money_problem: ['decimal_money_problem', '小数生活应用', '下册', '小数的加法和减法'],
+    },
+  },
+};
+
+// This reference establishes topic/chapter placement for the 2011-curriculum
+// edition only. It is not evidence of full coverage or alignment to the 2024 revision.
+const RJB_G4_LOWER_REFERENCE = {
+  curriculumReference: 'PEP-2011-curriculum',
+  curriculumSourceUrl: 'https://www.pep.com.cn/kcs/yjcg/lw/lw2015/201808/t20180810_1928698.html',
+};
+const PRIMARY_TOPIC_REFERENCES = {
+  rjb: {
+    4: {
+      view_from_direction: RJB_G4_LOWER_REFERENCE,
+      average: RJB_G4_LOWER_REFERENCE,
+      two_step_division_problem: RJB_G4_LOWER_REFERENCE,
+      decimal_money_problem: RJB_G4_LOWER_REFERENCE,
     },
   },
 };
@@ -162,8 +182,15 @@ function buildScope(stage, editionId, grade, topic, meta, topicList) {
   const chapterIndex = (topicList || (stage === 'primary' ? PRIMARY_TOPICS : JUNIOR_TOPICS)[grade])
     .findIndex((item) => item[0] === key) + 1;
   const chapterOrder = sourceChapterOrder || String(chapterIndex).padStart(2, '0');
-  const chapterId = `${editionId}-g${grade}-${meta.unitKey}-${chapterOrder}`;
-  const sourceAligned = stage !== 'junior' || JUNIOR_SOURCE_ALIGNED_EDITIONS.has(editionId);
+  const termKey = term === '上册' ? 'upper' : 'lower';
+  const chapterId = stage === 'primary'
+    ? `${editionId}-g${grade}-${termKey}-${meta.unitKey}-${chapterOrder}`
+    : `${editionId}-g${grade}-${meta.unitKey}-${chapterOrder}`;
+  const primaryReference = stage === 'primary'
+    && (((PRIMARY_TOPIC_REFERENCES[editionId] || {})[grade] || {})[key]);
+  const sourceAligned = stage === 'primary'
+    ? Boolean(primaryReference)
+    : JUNIOR_SOURCE_ALIGNED_EDITIONS.has(editionId);
   return {
     schoolStage: stage,
     textbookId: editionId,
@@ -179,6 +206,7 @@ function buildScope(stage, editionId, grade, topic, meta, topicList) {
     editionUnitKey: `${editionId}-g${grade}-${meta.unitKey}`,
     modelForm: meta.form,
     curriculumAlignment: sourceAligned ? 'source-aligned' : 'topic-aligned',
+    ...(primaryReference || {}),
     ...(meta.schoolSystem ? { schoolSystem: meta.schoolSystem } : {}),
   };
 }

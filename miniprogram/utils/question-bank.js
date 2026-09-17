@@ -205,6 +205,9 @@ function withCurriculumMetadata(item) {
     chapterId: scope.chapterId,
     chapterLabel: scope.chapterLabel,
     modelForm: item.modelForm || scope.modelForm,
+    curriculumAlignment: scope.curriculumAlignment,
+    curriculumReference: scope.curriculumReference,
+    curriculumSourceUrl: scope.curriculumSourceUrl,
   };
 }
 
@@ -1370,7 +1373,12 @@ function auditQuestionBankQuality(questions, { requireEditionIsolation = false }
       const fieldsMatch = item.term === curriculum.term
         && item.editionUnitKey === curriculum.editionUnitKey
         && item.unit === curriculum.chapterLabel
-        && (!item.chapterId || item.chapterId === curriculum.chapterId);
+        && (!item.chapterId || item.chapterId === curriculum.chapterId)
+        && (schoolStage !== 'primary' || (
+          item.curriculumAlignment === curriculum.curriculumAlignment
+          && item.curriculumReference === curriculum.curriculumReference
+          && item.curriculumSourceUrl === curriculum.curriculumSourceUrl
+        ));
       if (!fieldsMatch) issues.push({ id, code: 'curriculum_metadata_mismatch' });
     }
 
