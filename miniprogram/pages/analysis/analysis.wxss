@@ -1,0 +1,132 @@
+.wrong-summary {
+  margin-top: 24rpx;
+  padding: 30rpx 28rpx;
+  border-left: 10rpx solid #df6a51;
+  background: #fff1ed;
+}
+
+.wrong-eyebrow,
+.wrong-title,
+.wrong-copy {
+  display: block;
+}
+
+.wrong-eyebrow {
+  color: #a14d3d;
+  font-size: 22rpx;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.wrong-title {
+  margin-top: 10rpx;
+  font-size: 38rpx;
+  font-weight: 850;
+}
+
+.wrong-copy {
+  margin-top: 8rpx;
+  color: #755f59;
+  font-size: 23rpx;
+  line-height: 1.55;
+}
+
+.answer-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+  margin-top: 26rpx;
+}
+
+.compare-box {
+  padding: 22rpx;
+  border: 2rpx solid #d7ded4;
+  border-radius: 14rpx;
+  background: #fff;
+}
+
+.compare-box text,
+.compare-box .compare-answer {
+  display: block;
+}
+
+.compare-box text {
+  color: #737c74;
+  font-size: 21rpx;
+}
+
+.compare-box .compare-answer {
+  margin-top: 8rpx;
+  font-size: 38rpx;
+}
+
+.compare-box.correct .compare-answer {
+  color: #5d812b;
+}
+
+.analysis-section {
+  margin-top: 30rpx;
+}
+
+.analysis-title {
+  display: block;
+  margin-bottom: 16rpx;
+  font-size: 32rpx;
+  font-weight: 850;
+}
+
+.reason-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  padding: 22rpx 24rpx;
+  background: #fff1bc;
+  color: #6f580b;
+  font-size: 23rpx;
+  line-height: 1.6;
+}
+
+.reason-box .icon {
+  flex: 0 0 auto;
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.solution-list {
+  border-top: 2rpx solid #dce5da;
+  border-bottom: 2rpx solid #dce5da;
+}
+
+.solution-step {
+  display: grid;
+  grid-template-columns: 56rpx 1fr;
+  align-items: center;
+  min-height: 94rpx;
+  padding: 16rpx 0;
+  font-size: 25rpx;
+  line-height: 1.55;
+}
+
+.solution-step + .solution-step {
+  border-top: 2rpx solid #e1e8df;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: #e7f2d5;
+  color: #52731a;
+  font-size: 22rpx;
+  font-weight: 850;
+}
+
+.analysis-actions {
+  display: grid;
+  grid-template-columns: 190rpx 1fr;
+  gap: 18rpx;
+  margin-top: 30rpx;
+}

@@ -1,0 +1,30 @@
+{
+  "pages": [
+    "pages/intro/intro",
+    "pages/test/test",
+    "pages/result/result",
+    "pages/home/home",
+    "pages/question/question",
+    "pages/analysis/analysis",
+    "pages/games/games",
+    "pages/game/game",
+    "pages/growth/growth",
+    "pages/mine/mine",
+    "pages/practice/practice"
+  ],
+  "subpackages": [
+    {
+      "root": "packages/junior",
+      "pages": [
+        "mission/mission"
+      ]
+    }
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "backgroundColor": "#f9fcf8",
+    "backgroundTextStyle": "dark"
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

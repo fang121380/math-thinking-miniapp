@@ -1,0 +1,86 @@
+.result-title {
+  display: block;
+  margin-top: 42rpx;
+  font-size: 50rpx;
+  font-weight: 850;
+  line-height: 1.4;
+}
+
+.result-copy {
+  display: block;
+  margin-top: 10rpx;
+  color: #6e786f;
+  font-size: 25rpx;
+  line-height: 1.65;
+}
+
+.ability-list {
+  margin-top: 40rpx;
+}
+
+.ability-row {
+  display: grid;
+  grid-template-columns: 168rpx 1fr 64rpx;
+  align-items: center;
+  min-height: 96rpx;
+  border-bottom: 2rpx solid #e1e8df;
+}
+
+.ability-label {
+  font-size: 25rpx;
+  font-weight: 700;
+}
+
+.ability-track {
+  height: 14rpx;
+  background: #e0e8dd;
+}
+
+.ability-fill {
+  height: 100%;
+  background: #7ea84e;
+}
+
+.ability-fill.weak {
+  background: #df6a51;
+}
+
+.ability-score {
+  color: #56645a;
+  font-size: 23rpx;
+  font-weight: 700;
+  text-align: right;
+}
+
+.plan-band {
+  margin: 40rpx -40rpx 34rpx;
+  padding: 34rpx 40rpx;
+  border-top: 2rpx solid #d8e3d4;
+  border-bottom: 2rpx solid #d8e3d4;
+  background: #edf7e8;
+}
+
+.plan-eyebrow,
+.plan-title,
+.plan-copy {
+  display: block;
+}
+
+.plan-eyebrow {
+  color: #557224;
+  font-size: 23rpx;
+  font-weight: 800;
+}
+
+.plan-title {
+  margin-top: 10rpx;
+  font-size: 34rpx;
+  font-weight: 800;
+}
+
+.plan-copy {
+  margin-top: 8rpx;
+  color: #677468;
+  font-size: 23rpx;
+  line-height: 1.55;
+}

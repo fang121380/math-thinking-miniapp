@@ -1,0 +1,9 @@
+<view class="page no-nav" style="padding-top: {{safeTop}}px;">
+  <view class="page-head"><button class="back-button" bindtap="goBack">‹</button><text class="page-head-title">自主练习</text><view class="status">{{grade}}年级 · {{learningTerm}}</view></view>
+  <view class="practice-intro"><text class="practice-title">想练什么，自己选</text><text>完成每日任务后，也可以继续挑战新题。</text></view>
+  <view class="practice-section"><text class="practice-label">知识专题</text><view class="choice-wrap"><button wx:for="{{topics}}" wx:key="value" class="filter-chip {{selectedTopic === item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="selectTopic">{{item.label}}</button></view></view>
+  <view class="practice-section"><text class="practice-label">题型</text><view class="choice-wrap"><button wx:for="{{typeOptions}}" wx:key="value" class="filter-chip {{selectedType === item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="selectType">{{item.label}}</button></view></view>
+  <view class="practice-section"><text class="practice-label">难度</text><view class="choice-wrap"><button wx:for="{{difficultyOptions}}" wx:key="value" class="filter-chip {{selectedDifficulty === item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="selectDifficulty">{{item.label}}</button></view></view>
+  <view class="practice-section"><text class="practice-label">题量</text><view class="choice-wrap"><button wx:for="{{goals}}" wx:key="*this" class="filter-chip {{selectedGoal === item ? 'active' : ''}}" data-value="{{item}}" bindtap="selectGoal">{{item}}题</button></view></view>
+  <button class="primary-button practice-start" bindtap="startPractice">开始练习</button>
+</view>

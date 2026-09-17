@@ -1,0 +1,86 @@
+<view class="page no-nav" style="padding-top: {{safeTop}}px;">
+  <view class="page-head">
+    <button class="back-button" bindtap="goBack"><image class="icon" src="/assets/icons/arrow-left.svg" mode="aspectFit" /></button>
+    <text class="page-head-title">{{gameName}}</text>
+    <view class="status">{{difficultyLabel}}</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="state-panel"><text>正在准备随机挑战...</text></view>
+  <view wx:elif="{{loadError}}" class="state-panel error-state">
+    <text>{{loadError}}</text>
+    <button class="primary-button compact-button" bindtap="retryLoad">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <view class="game-panel">
+      <view class="question-label"><image class="icon" src="{{gameIcon}}" mode="aspectFit" /><text>{{mode === 'matching' ? '配对闯关' : mode === 'construct' ? '动手建造' : mode === 'route' ? '路线接力' : '随机挑战'}}</text></view>
+      <text class="game-title">{{challengeTitle}}</text>
+      <text class="game-copy">{{instruction}}</text>
+
+      <view wx:if="{{type === 'puzzle'}}" class="puzzle-mode">
+        <view class="tiles">
+          <button wx:for="{{tiles}}" wx:key="index" class="tile {{item === null ? 'empty' : ''}}" data-index="{{index}}" bindtap="moveTile">{{item === null ? '' : item}}</button>
+        </view>
+        <view class="game-stats"><text>已移动 {{moves}} 步</text><text>{{complete ? '已完成' : '按顺序排到 1～8'}}</text></view>
+      </view>
+
+      <view wx:elif="{{mode === 'construct'}}" class="construct-mode">
+        <view class="construct-tray">
+          <text wx:if="{{!constructTray.length}}" class="tray-placeholder">从下方挑选令牌，按顺序摆进这里</text>
+          <button wx:for="{{constructTray}}" wx:key="id" class="tray-token" data-index="{{item.index}}" bindtap="removeConstructToken">{{item.label}}</button>
+        </view>
+        <view class="construct-progress"><text>已摆 {{constructTray.length}} / {{constructTargetCount}} 个令牌</text><text>点托盘可撤回</text></view>
+        <view class="token-palette">
+          <button wx:for="{{constructPalette}}" wx:key="id" class="token-button {{item.used ? 'used' : ''}}" data-id="{{item.id}}" disabled="{{item.used}}" bindtap="selectConstructToken">{{item.label}}</button>
+        </view>
+      </view>
+
+      <view wx:elif="{{mode === 'matching'}}" class="matching-mode">
+        <view class="matching-grid">
+          <button wx:for="{{matchingCards}}" wx:key="id" class="matching-card {{item.selected ? 'selected' : ''}} {{item.matched ? 'matched' : ''}}" data-id="{{item.id}}" disabled="{{item.matched}}" bindtap="selectMatchingCard">{{item.label}}</button>
+        </view>
+        <view class="game-stats"><text>已配对 {{matchingPairsDone}} / {{matchingPairsTotal}} 组</text><text>配错也可以继续</text></view>
+      </view>
+
+      <view wx:elif="{{mode === 'route'}}" class="route-mode">
+        <view class="route-progress" aria-label="路线进度">
+          <view wx:for="{{routeDots}}" wx:key="id" class="route-dot {{item.done ? 'done' : item.current ? 'current' : ''}}"></view>
+        </view>
+        <text class="route-prompt">{{routePrompt}}</text>
+        <view class="route-choice-grid">
+          <button wx:for="{{routeChoices}}" wx:key="id" class="route-choice" data-id="{{item.id}}" bindtap="advanceRoute">{{item.label}}</button>
+        </view>
+        <text class="route-status">第 {{routeCheckpoint + 1}} / {{routeTotal}} 关</text>
+      </view>
+
+      <view wx:elif="{{mode === 'choice'}}" class="pattern-mode">
+        <view wx:if="{{sequence.length}}" class="sequence-row">
+          <view wx:for="{{sequence}}" wx:key="index" class="sequence-cell">{{item}}</view>
+          <view class="sequence-cell missing">?</view>
+        </view>
+        <view class="choice-grid">
+          <button wx:for="{{choices}}" wx:key="item" class="choice-button {{selectedAnswer === item ? 'selected' : ''}}" data-value="{{item}}" bindtap="selectPattern">{{item}}</button>
+        </view>
+      </view>
+
+      <view wx:elif="{{type === 'partition'}}" class="partition-mode">
+        <view class="partition-grid" style="{{partitionGridStyle}}">
+          <button wx:for="{{partitionCells}}" wx:key="key" style="{{item.style}}" class="partition-cell {{item.selected ? 'selected' : ''}}" data-key="{{item.key}}" bindtap="togglePartitionCell"></button>
+        </view>
+        <view class="game-stats"><text>已选 {{selectedCount}} 格</text><text>目标 {{targetCount}} 格</text></view>
+      </view>
+    </view>
+
+    <view wx:if="{{feedbackText}}" class="feedback-band {{feedbackKind}}">
+      <text>{{feedbackText}}</text>
+      <button wx:if="{{showRetrySave}}" class="feedback-action" bindtap="retrySave">再次保存</button>
+    </view>
+
+    <view class="game-actions {{complete ? 'complete-actions' : ''}}">
+      <button wx:if="{{!complete}}" class="secondary-button" bindtap="resetGame"><image class="icon" src="/assets/icons/rotate-ccw.svg" mode="aspectFit" /><text>重来</text></button>
+      <button wx:if="{{!complete}}" class="secondary-button" bindtap="hint"><image class="icon" src="/assets/icons/lightbulb.svg" mode="aspectFit" /><text>提示</text></button>
+      <button wx:if="{{(mode === 'choice' || mode === 'construct' || type === 'partition') && !complete}}" class="primary-button" bindtap="checkAnswer">检查答案</button>
+      <button wx:if="{{complete && !pendingCompletion}}" class="primary-button" bindtap="nextRound">再来一局</button>
+    </view>
+  </block>
+</view>

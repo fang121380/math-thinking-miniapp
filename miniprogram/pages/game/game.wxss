@@ -1,0 +1,198 @@
+.state-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28rpx;
+  min-height: 360rpx;
+  color: #66736a;
+  font-size: 27rpx;
+  text-align: center;
+}
+
+.error-state { color: #963f33; }
+.compact-button { width: 280rpx; height: 84rpx; font-size: 27rpx; }
+
+.game-panel {
+  margin-top: 24rpx;
+  padding: 34rpx 30rpx;
+  border: 2rpx solid #c5d2c1;
+  border-radius: 16rpx;
+  background: #fff;
+}
+
+.game-title,
+.game-copy { display: block; }
+.game-title { margin-top: 18rpx; font-size: 36rpx; font-weight: 850; line-height: 1.35; }
+.game-copy { margin-top: 8rpx; color: #6e786f; font-size: 24rpx; line-height: 1.55; }
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16rpx;
+  width: min(468rpx, 100%);
+  aspect-ratio: 1;
+  margin: 30rpx auto;
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border-radius: 14rpx;
+  background: #e7f2d5;
+  color: #52731a;
+  font-size: 38rpx;
+  font-weight: 850;
+}
+
+.tile.empty { border: 4rpx dashed #d8a63e; background: #fff8dc; }
+
+.game-stats {
+  display: flex;
+  justify-content: center;
+  gap: 36rpx;
+  color: #69746b;
+  font-size: 23rpx;
+}
+
+.sequence-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10rpx;
+  margin-top: 34rpx;
+}
+
+.sequence-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 2rpx solid #c5d2c1;
+  border-radius: 12rpx;
+  background: #f8fbf7;
+  font-size: 29rpx;
+  font-weight: 800;
+}
+
+.sequence-cell.missing { border-style: dashed; background: #fff1bc; color: #8a6717; }
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+  margin-top: 26rpx;
+}
+
+.choice-button {
+  min-height: 86rpx;
+  border: 2rpx solid #c5d2c1;
+  background: #fff;
+  color: #29382e;
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.choice-button.selected { border-color: #df6a51; background: #fff1ed; color: #9e4939; }
+
+.partition-grid {
+  display: grid;
+  gap: 10rpx;
+  width: min(480rpx, 100%);
+  aspect-ratio: 1;
+  margin: 30rpx auto;
+}
+
+.partition-cell {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 2rpx solid #98ad91;
+  border-radius: 10rpx;
+  background: #edf4e9;
+}
+
+.partition-cell.selected { border-color: #d65f49; background: #ffb6a8; }
+
+.construct-mode,
+.matching-mode,
+.route-mode { margin-top: 30rpx; }
+
+.construct-tray {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: center;
+  gap: 12rpx;
+  min-height: 132rpx;
+  padding: 16rpx;
+  border: 3rpx dashed #d7aa47;
+  border-radius: 14rpx;
+  background: #fffaf0;
+}
+
+.tray-placeholder { color: #8a774c; font-size: 24rpx; line-height: 1.5; }
+.tray-token { min-height: 58rpx; padding: 8rpx 18rpx; border: 2rpx solid #d69b39; border-radius: 10rpx; background: #fff; color: #73501c; font-size: 27rpx; font-weight: 850; }
+.construct-progress { display: flex; justify-content: space-between; gap: 18rpx; margin-top: 16rpx; color: #727a70; font-size: 21rpx; }
+.token-palette { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14rpx; margin-top: 22rpx; }
+.token-button { min-height: 82rpx; border: 2rpx solid #a4be8e; border-radius: 12rpx; background: #f4faef; color: #385530; font-size: 27rpx; font-weight: 850; }
+.token-button:active { background: #e1f0d8; }
+.token-button.used { border-color: #d8ded5; background: #f5f6f4; color: #a1aaa0; }
+
+.matching-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14rpx; }
+.matching-card { min-height: 112rpx; padding: 14rpx; border: 2rpx solid #c6d6c1; border-radius: 12rpx; background: #fff; color: #304235; font-size: 24rpx; font-weight: 800; line-height: 1.4; white-space: normal; }
+.matching-card:active { background: #f0f7ed; }
+.matching-card.selected { border-color: #df6a51; background: #fff1ed; color: #934838; }
+.matching-card.matched { border-color: #91b65d; background: #edf7e8; color: #517324; opacity: 0.72; }
+
+.route-progress { display: flex; gap: 10rpx; margin: 4rpx 0 26rpx; }
+.route-dot { flex: 1; min-width: 0; height: 12rpx; border-radius: 8rpx; background: #dce5da; }
+.route-dot.done { background: #91b65d; }
+.route-dot.current { background: #df6a51; }
+.route-prompt { display: block; min-height: 76rpx; color: #344037; font-size: 29rpx; font-weight: 850; line-height: 1.45; }
+.route-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16rpx; margin-top: 22rpx; }
+.route-choice { min-height: 92rpx; border: 2rpx solid #bfd1c1; border-radius: 12rpx; background: #f8fbf7; color: #334338; font-size: 29rpx; font-weight: 850; }
+.route-choice:active { border-color: #df6a51; background: #fff1ed; }
+.route-status { display: block; margin-top: 16rpx; color: #68766b; font-size: 22rpx; text-align: center; }
+
+.feedback-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  min-height: 76rpx;
+  margin-top: 20rpx;
+  padding: 16rpx 20rpx;
+  border-left: 8rpx solid #d8a63e;
+  background: #fff8dc;
+  color: #695117;
+  font-size: 24rpx;
+  line-height: 1.45;
+}
+
+.feedback-band.error { border-color: #d65f49; background: #fff1ed; color: #873d31; }
+.feedback-band.success { border-color: #7ea84e; background: #edf7e8; color: #4f7020; }
+.feedback-action { flex: 0 0 auto; padding: 16rpx; background: transparent; color: inherit; font-size: 23rpx; font-weight: 800; }
+
+.game-actions {
+  display: grid;
+  grid-template-columns: 160rpx 160rpx minmax(0, 1fr);
+  gap: 14rpx;
+  margin-top: 24rpx;
+}
+
+.game-actions .secondary-button,
+.game-actions .primary-button { height: 88rpx; font-size: 25rpx; }
+.game-actions.complete-actions { grid-template-columns: 1fr; }
+.secondary-button .icon { width: 30rpx; height: 30rpx; }
+
+@media (max-width: 340px) {
+  .game-actions { grid-template-columns: repeat(2, 1fr); }
+  .game-actions .primary-button { grid-column: 1 / -1; }
+  .token-palette { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .construct-progress { flex-direction: column; gap: 4rpx; }
+  .matching-card { font-size: 22rpx; }
+}

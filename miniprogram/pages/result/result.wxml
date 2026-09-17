@@ -1,0 +1,31 @@
+<view class="page no-nav" style="padding-top: {{safeTop}}px;">
+  <view class="topbar">
+    <view class="brand">
+      <view class="brand-mark"><image class="icon" src="/assets/icons/route.svg" mode="aspectFit" /></view>
+      <view><text class="brand-name">梵数学</text><text class="brand-sub">{{learningLabel}}</text></view>
+    </view>
+    <view class="status"><image class="icon" src="/assets/icons/check.svg" mode="aspectFit" /><text>摸底完成</text></view>
+  </view>
+
+  <text class="result-title">先从这两项练起</text>
+  <text class="result-copy">{{resultCopy}}</text>
+
+  <view class="ability-list">
+    <view wx:for="{{abilityRows}}" wx:key="key" class="ability-row">
+      <text class="ability-label">{{item.label}}</text>
+      <view class="ability-track"><view class="ability-fill {{item.weak ? 'weak' : ''}}" style="width: {{item.score}}%"></view></view>
+      <text class="ability-score">{{item.score}}</text>
+    </view>
+  </view>
+
+  <view class="plan-band">
+    <text class="plan-eyebrow">下一阶段计划</text>
+    <text class="plan-title">{{planTitle}}</text>
+    <text class="plan-copy">每天 {{dailyGoal}} 题，选择、填空和应用题交替练习。</text>
+  </view>
+
+  <button class="primary-button" bindtap="startLearning">
+    <text>开始今天的练习</text>
+    <image class="icon" src="/assets/icons/arrow-right.svg" mode="aspectFit" />
+  </button>
+</view>

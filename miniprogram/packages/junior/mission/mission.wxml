@@ -1,0 +1,63 @@
+<view class="page no-nav mission-page" style="padding-top: {{safeTop}}px;">
+  <view class="page-head">
+    <button class="back-button" aria-label="返回任务列表" bindtap="goBack"><image class="icon" src="/assets/icons/arrow-left.svg" mode="aspectFit" /></button>
+    <text class="page-head-title">{{missionName}}</text>
+    <view class="status"><text>{{difficultyLabel}}</text></view>
+  </view>
+
+  <view wx:if="{{loading}}" class="state-panel"><text>正在准备思维任务...</text></view>
+  <view wx:elif="{{loadError}}" class="state-panel error-state">
+    <text>{{loadError}}</text>
+    <button class="primary-button compact-button" bindtap="retryLoad">重新加载</button>
+  </view>
+
+  <block wx:else>
+    <view class="mission-panel">
+      <view class="mission-label"><image class="icon" src="{{missionIcon}}" mode="aspectFit" /><text>思维实验室 · {{formatLabel}}</text></view>
+      <text class="mission-title">{{challengeTitle}}</text>
+      <text class="mission-copy">{{instruction}}</text>
+
+      <view wx:if="{{format === 'transform' || format === 'proof-chain'}}" class="workspace-mode">
+        <view class="reasoning-record">
+          <text class="workspace-title">你的推理记录</text>
+          <text wx:if="{{!orderedCards.length}}" class="workspace-placeholder">从下面选择第一步，按正确顺序排入这里</text>
+          <button wx:for="{{orderedCards}}" wx:key="id" class="record-card" data-index="{{item.index}}" bindtap="removeWorkspaceCard"><text class="record-index">{{item.index + 1}}</text><text>{{item.text}}</text></button>
+        </view>
+        <text class="workspace-caption">点击已放入的步骤可以撤回</text>
+        <view class="workspace-shelf">
+          <button wx:for="{{workspaceCards}}" wx:key="id" class="workspace-card {{item.used ? 'used' : ''}}" data-id="{{item.id}}" disabled="{{item.used}}" bindtap="selectWorkspaceCard">{{item.text}}</button>
+        </view>
+      </view>
+
+      <view wx:elif="{{format === 'coordinate'}}" class="coordinate-mode">
+        <view class="coordinate-board" aria-label="坐标选择区">
+          <button wx:for="{{coordinateCells}}" wx:key="id" class="coordinate-cell {{item.selected ? 'selected' : ''}}" data-id="{{item.id}}" bindtap="toggleCoordinateCell">{{item.label}}</button>
+        </view>
+        <text class="selection-count">已选择 {{coordinateSelectedCount}} / {{coordinateTargetCount}} 个坐标</text>
+      </view>
+
+      <view wx:elif="{{format === 'data-board'}}" class="data-mode">
+        <text class="workspace-title">先选出直接支持结论的证据</text>
+        <view class="evidence-list">
+          <button wx:for="{{evidenceCards}}" wx:key="id" class="evidence-card {{item.selected ? 'selected' : ''}}" data-id="{{item.id}}" bindtap="toggleEvidence">{{item.text}}</button>
+        </view>
+        <text class="workspace-title conclusion-title">再选择结论</text>
+        <view class="conclusion-list">
+          <button wx:for="{{conclusionChoices}}" wx:key="id" class="conclusion-card {{item.selected ? 'selected' : ''}}" data-id="{{item.id}}" bindtap="selectConclusion">{{item.text}}</button>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{feedbackText}}" class="feedback-band {{feedbackKind}}">
+      <text>{{feedbackText}}</text>
+      <button wx:if="{{showRetrySave}}" class="feedback-action" bindtap="retrySave">再次保存</button>
+    </view>
+
+    <view class="mission-actions {{complete ? 'complete-actions' : ''}}">
+      <button wx:if="{{!complete}}" class="secondary-button" bindtap="resetMission"><image class="icon" src="/assets/icons/rotate-ccw.svg" mode="aspectFit" /><text>重来</text></button>
+      <button wx:if="{{!complete}}" class="secondary-button" bindtap="hint"><image class="icon" src="/assets/icons/lightbulb.svg" mode="aspectFit" /><text>提示</text></button>
+      <button wx:if="{{!complete}}" class="primary-button" bindtap="checkMission">提交推理</button>
+      <button wx:if="{{complete && !pendingCompletion}}" class="primary-button" bindtap="nextMission">下一项任务</button>
+    </view>
+  </block>
+</view>

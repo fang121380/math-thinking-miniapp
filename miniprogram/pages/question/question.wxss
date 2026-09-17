@@ -1,0 +1,65 @@
+.question-area {
+  margin-top: 34rpx;
+}
+
+.fill-wrap {
+  padding: 50rpx 0;
+}
+
+.answer-input {
+  width: 280rpx;
+  height: 96rpx;
+  margin: 0 auto;
+  border: 4rpx solid #df6a51;
+  border-radius: 14rpx;
+  background: #fff8f5;
+  color: #8b493c;
+  font-size: 38rpx;
+  font-weight: 800;
+  text-align: center;
+}
+
+.work-input {
+  width: 100%;
+  height: 190rpx;
+  padding: 20rpx;
+  border: 2rpx solid #c5d2c1;
+  border-radius: 14rpx;
+  background: #fbfdfb;
+  font-size: 27rpx;
+  line-height: 1.6;
+}
+
+.final-input {
+  width: 100%;
+  height: 84rpx;
+  margin-top: 18rpx;
+  padding: 0 20rpx;
+  border: 2rpx solid #c5d2c1;
+  border-radius: 14rpx;
+  background: #fff;
+  font-size: 28rpx;
+}
+
+.hint-button {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 24rpx;
+  background: transparent;
+  color: #607064;
+  font-size: 24rpx;
+}
+
+.hint-button .icon {
+  width: 30rpx;
+  height: 30rpx;
+}
+
+.submit-button {
+  margin-top: 36rpx;
+}
+
+.knowledge-feedback { margin-top: 22rpx; padding: 22rpx; border-left: 8rpx solid #7ea84e; background: #f1f8e9; color: #47613a; font-size: 24rpx; }
+.knowledge-feedback text { display: block; margin-top: 8rpx; }
+.feedback-title { margin-top: 14rpx; color: #2f5132; font-weight: 800; }

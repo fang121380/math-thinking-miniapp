@@ -1,0 +1,58 @@
+<view class="page" style="padding-top: {{safeTop}}px;">
+  <view class="topbar">
+    <view class="brand">
+      <view class="brand-mark"><image class="icon" src="/assets/icons/route.svg" mode="aspectFit" /></view>
+      <view><text class="brand-name">梵数学</text><text class="brand-sub">{{learningLabel}}</text></view>
+    </view>
+    <view class="status"><image class="icon" src="/assets/icons/award.svg" mode="aspectFit" /><text>累计 {{stars}} 颗星</text></view>
+  </view>
+
+  <view class="section-title route-title">
+    <text class="section-title-main">今日训练</text>
+    <text class="section-title-sub">第 {{currentIndex + 1}} 题 / 共 {{total}} 题</text>
+  </view>
+
+  <view wx:if="{{loadError}}" class="home-error"><text>{{loadError}}</text><button bindtap="retryLoad">重试</button></view>
+  <view wx:if="{{showReminder}}" class="reminder-band"><image class="icon" src="/assets/icons/bell.svg" mode="aspectFit" /><text>{{reminderText}}</text><button bindtap="dismissReminder">知道了</button></view>
+  <view wx:if="{{showContentNotice}}" class="content-notice" aria-label="本次更新提示"><view><text class="content-notice-title">{{contentNotice.title}}</text><text class="content-notice-copy">{{contentNotice.copy}}</text></view><button bindtap="dismissContentNotice">知道了</button></view>
+
+  <view wx:if="{{showMissionChoice}}" class="mission-choice" aria-label="选择今天的学习方式">
+    <text class="mission-choice-title">今天想怎么练？</text>
+    <text class="mission-choice-copy">复习熟悉的方法，或挑战一种新思路。</text>
+    <view class="mission-choice-actions">
+      <button class="mission-choice-button" data-mode="review" bindtap="chooseMissionMode">复习一下</button>
+      <button class="mission-choice-button challenge" data-mode="challenge" bindtap="chooseMissionMode">挑战一下</button>
+    </view>
+  </view>
+
+  <view wx:else class="route-band">
+    <view class="route-line"></view>
+    <view wx:for="{{steps}}" wx:key="id" class="route-step {{item.state}}">
+      <view class="route-node">
+        <image wx:if="{{item.state === 'locked'}}" class="icon" src="/assets/icons/lock.svg" mode="aspectFit" />
+        <image wx:elif="{{item.type === '选择题'}}" class="icon" src="/assets/icons/check.svg" mode="aspectFit" />
+        <image wx:elif="{{item.type === '填空题'}}" class="icon" src="/assets/icons/text-cursor-input.svg" mode="aspectFit" />
+        <image wx:else class="icon" src="/assets/icons/notebook-pen.svg" mode="aspectFit" />
+      </view>
+      <view class="route-copy"><text class="route-name">{{item.type}}</text><text class="route-description">{{item.description}}</text></view>
+      <text class="route-state">{{item.stateText}}</text>
+    </view>
+  </view>
+
+  <view class="today-focus" aria-label="今日数学主题">
+    <view><text class="focus-eyebrow">{{dailyTheme.label}} · {{missionFocus}}</text><text class="focus-title">{{dailyTheme.title}}</text><text class="focus-copy">{{dailyTheme.copy}}</text><text class="journey-next">{{journeyFocus.label}} · {{journeyFocus.stateText}}</text></view>
+    <image class="rabbit focus-rabbit" src="/assets/thinking-rabbit-color.png" mode="aspectFit" />
+  </view>
+
+  <button wx:if="{{!showMissionChoice}}" class="primary-button" bindtap="startCurrent">
+    <text>{{dailyComplete ? '继续自主练习' : '继续' + currentLabel}}</text>
+    <image class="icon" src="/assets/icons/arrow-right.svg" mode="aspectFit" />
+  </button>
+
+  <view class="bottom-nav">
+    <view class="nav-item active" bindtap="goHome"><view class="nav-icon"><image class="icon" src="/assets/icons/house.svg" mode="aspectFit" /></view><text>今日</text></view>
+    <view class="nav-item" bindtap="goGames"><view class="nav-icon"><image class="icon" src="/assets/icons/gamepad-2.svg" mode="aspectFit" /></view><text>游戏</text></view>
+    <view class="nav-item" bindtap="goGrowth"><view class="nav-icon"><image class="icon" src="/assets/icons/chart-no-axes-column-increasing.svg" mode="aspectFit" /></view><text>成长</text></view>
+    <view class="nav-item" bindtap="goMine"><view class="nav-icon"><image class="icon" src="/assets/icons/user-round.svg" mode="aspectFit" /></view><text>我的</text></view>
+  </view>
+</view>

@@ -1,0 +1,56 @@
+.growth-title { margin-top: 30rpx; }
+.weekly-band { margin-top: 24rpx; padding: 28rpx 0; border-top: 2rpx solid #d7e3d3; border-bottom: 2rpx solid #d7e3d3; }
+.weekly-head { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; }
+.weekly-eyebrow, .weekly-title, .weekly-copy { display: block; }
+.weekly-eyebrow { color: #557224; font-size: 22rpx; font-weight: 800; }
+.weekly-title { margin-top: 7rpx; font-size: 31rpx; font-weight: 850; }
+.weekly-count { flex: 0 0 auto; color: #98503f; font-size: 25rpx; font-weight: 850; }
+.weekly-track { height: 16rpx; margin-top: 20rpx; overflow: hidden; background: #dce8d8; }
+.weekly-fill { height: 100%; min-width: 0; background: #7ea84e; }
+.weekly-copy { margin-top: 14rpx; color: #6c786f; font-size: 22rpx; }
+.metric-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14rpx; margin-top: 28rpx; }
+.metric { min-width: 0; padding: 22rpx 16rpx; border: 2rpx solid #d8e2d5; border-radius: 8rpx; background: #fff; }
+.metric text, .metric .metric-value { display: block; }
+.metric text { color: #717b73; font-size: 21rpx; }
+.metric .metric-value { margin-top: 10rpx; color: #26342f; font-size: 34rpx; font-weight: 850; }
+.journey-title { margin-top: 40rpx; }
+.journey-list { margin-top: 18rpx; border-top: 2rpx solid #dce5da; border-bottom: 2rpx solid #dce5da; }
+.journey-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 18rpx; min-height: 106rpx; }
+.journey-row + .journey-row { border-top: 2rpx solid #e1e8df; }
+.journey-copy-wrap { min-width: 0; }
+.journey-name, .journey-copy { display: block; }
+.journey-name { color: #26342f; font-size: 27rpx; font-weight: 850; }
+.journey-copy { margin-top: 5rpx; color: #717b73; font-size: 21rpx; }
+.journey-meta { display: grid; justify-items: end; gap: 6rpx; }
+.journey-state { padding: 7rpx 10rpx; background: #f4f6f2; color: #5c6d58; font-size: 20rpx; font-weight: 800; }
+.journey-state.using { background: #e7f2d5; color: #4e6a23; }
+.journey-state.growing { background: #fff2d8; color: #8b6519; }
+.journey-games { color: #717b73; font-size: 19rpx; }
+.ability-list { margin-top: 30rpx; }
+.ability-row { display: grid; grid-template-columns: 160rpx 1fr 60rpx; align-items: center; min-height: 78rpx; border-bottom: 2rpx solid #e1e8df; font-size: 23rpx; }
+.ability-track { height: 14rpx; background: #e0e8dd; }
+.ability-fill { height: 100%; background: #7ea84e; }
+.ability-row > text:last-child { text-align: right; }
+.badges-title { margin-top: 40rpx; }
+.badge-list { margin-top: 18rpx; border-top: 2rpx solid #dce5da; border-bottom: 2rpx solid #dce5da; }
+.badge-row { display: grid; grid-template-columns: 78rpx 1fr auto; align-items: center; gap: 12rpx; min-height: 114rpx; }
+.badge-row + .badge-row { border-top: 2rpx solid #e1e8df; }
+.badge-icon { display: flex; align-items: center; justify-content: center; width: 62rpx; height: 62rpx; background: #e7f2d5; }
+.badge-row.next .badge-icon { background: #fff2d8; }
+.badge-icon .icon { width: 34rpx; height: 34rpx; }
+.badge-title, .badge-description { display: block; }
+.badge-title { color: #26342f; font-size: 25rpx; font-weight: 800; }
+.badge-description { margin-top: 4rpx; color: #717b73; font-size: 20rpx; line-height: 1.45; }
+.badge-state { padding: 8rpx 10rpx; background: #e7f2d5; color: #4e6a23; font-size: 20rpx; font-weight: 800; }
+.badge-row.next .badge-state { background: #fff2d8; color: #8b6519; }
+.mistakes-title { margin-top: 40rpx; }
+.mistake-list { margin-top: 18rpx; border-top: 2rpx solid #dce5da; border-bottom: 2rpx solid #dce5da; }
+.mistake-row { display: grid; grid-template-columns: 86rpx 1fr auto; align-items: center; min-height: 126rpx; }
+.mistake-row + .mistake-row { border-top: 2rpx solid #e1e8df; }
+.mistake-icon { display: flex; align-items: center; justify-content: center; width: 68rpx; height: 68rpx; border-radius: 14rpx; background: #ffe3dd; }
+.mistake-icon .icon { width: 34rpx; height: 34rpx; }
+.mistake-name, .mistake-copy { display: block; max-width: 390rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mistake-name { font-size: 25rpx; font-weight: 800; }
+.mistake-copy { margin-top: 5rpx; color: #717b73; font-size: 21rpx; }
+.mistake-action { padding: 10rpx 12rpx; border-radius: 10rpx; background: #fff; color: #63755d; font-size: 21rpx; font-weight: 800; }
+.empty-box { margin-top: 20rpx; padding: 42rpx; border: 2rpx dashed #cad6c6; }

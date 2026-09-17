@@ -1,0 +1,50 @@
+<view class="page no-nav" style="padding-top: {{safeTop}}px;">
+  <view class="page-head">
+    <button class="back-button" bindtap="goBack">
+      <image class="icon" src="/assets/icons/arrow-left.svg" mode="aspectFit" />
+    </button>
+    <text class="page-head-title">摸底小测</text>
+    <view class="status">{{index + 1}} / {{total}}</view>
+  </view>
+
+  <view class="progress-row">
+    <text>{{question.unit}}</text>
+    <text class="progress-muted">{{question.type === 'choice' ? '选择题' : question.type === 'fill' ? '填空题' : '应用题'}}</text>
+  </view>
+  <view class="track"><view class="track-fill" style="width: {{progressPercent}}%"></view></view>
+
+  <view class="test-content">
+    <view class="question-label">
+      <image class="icon" src="/assets/icons/search.svg" mode="aspectFit" />
+      <text>想清楚再作答</text>
+    </view>
+    <text class="question-title">{{question.prompt}}</text>
+    <text class="question-help">这不是考试，答错也会帮你找到练习方向。</text>
+
+    <view class="panel">
+      <view wx:if="{{question.type === 'choice'}}" class="answer-grid">
+        <button wx:for="{{question.displayOptions}}" wx:key="value" class="answer-button {{answer === item.value ? 'selected' : ''}}" data-value="{{item.value}}" bindtap="chooseOption">{{item.label}}</button>
+      </view>
+      <view wx:elif="{{question.type === 'fill'}}" class="input-wrap">
+        <input class="answer-input" value="{{answer}}" placeholder="{{question.answerUnit ? '填写答案和单位' : '填写答案'}}" bindinput="onAnswerInput" />
+      </view>
+      <view wx:else class="problem-input-wrap">
+        <textarea class="problem-input" value="{{answer}}" placeholder="{{question.answerUnit ? '写下最后答案和单位' : '写下最后答案，可以只填数字'}}" bindinput="onAnswerInput" />
+      </view>
+
+      <button wx:if="{{!showHint}}" class="hint-button" bindtap="toggleHint">
+        <image class="icon" src="/assets/icons/lightbulb.svg" mode="aspectFit" />
+        <text>给我一点提示</text>
+      </button>
+      <view wx:else class="hint-row">
+        <image class="icon" src="/assets/icons/lightbulb.svg" mode="aspectFit" />
+        <text>{{question.hint}}</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="primary-button submit-button" bindtap="submitAnswer">
+    <text>{{index + 1 === total ? '查看摸底结果' : '提交并继续'}}</text>
+    <image class="icon" src="/assets/icons/arrow-right.svg" mode="aspectFit" />
+  </button>
+</view>

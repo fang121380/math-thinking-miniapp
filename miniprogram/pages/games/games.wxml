@@ -1,0 +1,26 @@
+<view class="page" style="padding-top: {{safeTop}}px;">
+  <view class="topbar">
+    <view class="brand"><view class="brand-mark"><image class="icon" src="/assets/icons/route.svg" mode="aspectFit" /></view><view><text class="brand-name">梵数学</text><text class="brand-sub">{{learningLabel}}</text></view></view>
+    <view class="status"><image class="icon" src="/assets/icons/star.svg" mode="aspectFit" /><text>{{stars}} 颗思维星</text></view>
+  </view>
+
+  <view class="section-title games-title"><text class="section-title-main">{{hubTitle}}</text><text class="section-title-sub">{{schoolStage === 'junior' ? '完成推理记录，留下真实思考' : '每一局约 1 - 3 分钟'}}</text></view>
+
+  <view class="recommend-band {{schoolStage === 'junior' ? 'mission-band' : ''}}"><text class="recommend-eyebrow">{{hubEyebrow}}</text><text class="recommend-title">{{recommendedName}}</text><text class="recommend-copy">{{hubCopy}}</text><button class="primary-button compact-start" data-type="{{recommendedType}}" bindtap="openGame">{{startLabel}}</button></view>
+
+  <text class="recommend-guidance">{{schoolStage === 'junior' ? '适合现在完成的一项任务' : '适合现在练一练'}}</text>
+  <view class="game-list">
+    <view wx:for="{{games}}" wx:key="type" class="game-row" data-type="{{item.type}}" bindtap="openGame">
+      <view class="game-icon {{schoolStage === 'junior' ? 'mission-icon' : ''}}"><image class="icon" src="{{item.icon}}" mode="aspectFit" /></view>
+      <view class="game-copy-wrap"><text class="game-name">{{item.name}}</text><text class="game-copy">{{item.description}}</text></view>
+      <text class="game-tag">{{item.completions}} {{activityUnit}}</text>
+    </view>
+  </view>
+
+  <view class="bottom-nav">
+    <view class="nav-item" bindtap="goHome"><view class="nav-icon"><image class="icon" src="/assets/icons/house.svg" mode="aspectFit" /></view><text>今天</text></view>
+    <view class="nav-item active" bindtap="goGames"><view class="nav-icon"><image class="icon" src="/assets/icons/gamepad-2.svg" mode="aspectFit" /></view><text>{{navActivityLabel}}</text></view>
+    <view class="nav-item" bindtap="goGrowth"><view class="nav-icon"><image class="icon" src="/assets/icons/chart-no-axes-column-increasing.svg" mode="aspectFit" /></view><text>成长</text></view>
+    <view class="nav-item" bindtap="goMine"><view class="nav-icon"><image class="icon" src="/assets/icons/user-round.svg" mode="aspectFit" /></view><text>我的</text></view>
+  </view>
+</view>

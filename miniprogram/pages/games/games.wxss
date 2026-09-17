@@ -1,0 +1,20 @@
+.games-title { margin-top: 28rpx; }
+.recommend-band { margin-top: 24rpx; padding: 28rpx; border: 2rpx solid #c5d2c1; border-radius: 12rpx; background: #edf7e8; }
+.recommend-band.mission-band { border-color: #bfd8d7; background: #eef8f7; }
+.recommend-eyebrow, .recommend-title, .recommend-copy { display: block; }
+.recommend-eyebrow { color: #557224; font-size: 22rpx; font-weight: 800; }
+.recommend-title { margin-top: 6rpx; font-size: 34rpx; font-weight: 800; }
+.recommend-copy { margin-top: 6rpx; color: #627364; font-size: 23rpx; }
+.recommend-guidance { display: block; margin-top: 12rpx; color: #557224; font-size: 21rpx; font-weight: 800; }
+.compact-start { width: 100%; height: 78rpx; margin-top: 20rpx; font-size: 26rpx; }
+.game-list { margin-top: 20rpx; }
+.game-row { display: grid; grid-template-columns: 76rpx minmax(0, 1fr) auto; align-items: center; gap: 18rpx; min-height: 132rpx; padding: 16rpx 0; border-bottom: 2rpx solid #dce5da; }
+.game-row:active { background: #f0f7ed; }
+.game-icon { display: flex; align-items: center; justify-content: center; width: 68rpx; height: 68rpx; border-radius: 12rpx; background: #e7f2d5; }
+.game-icon.mission-icon { background: #dff1f0; }
+.game-icon .icon { width: 38rpx; height: 38rpx; }
+.game-copy-wrap { min-width: 0; }
+.game-name, .game-copy { display: block; }
+.game-name { font-size: 29rpx; font-weight: 800; }
+.game-copy { margin-top: 4rpx; color: #707a72; font-size: 22rpx; }
+.game-tag { padding: 8rpx 12rpx; border-radius: 8rpx; background: #f4f6f2; color: #5c6d58; font-size: 20rpx; font-weight: 800; }

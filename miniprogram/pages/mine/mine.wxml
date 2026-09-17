@@ -1,0 +1,47 @@
+<view class="page" style="padding-top: {{safeTop}}px;">
+  <view class="topbar">
+    <view class="brand"><view class="brand-mark"><image class="icon" src="/assets/icons/route.svg" mode="aspectFit" /></view><view><text class="brand-name">梵数学</text><text class="brand-sub">{{textbookLabel}} · {{gradeLabel}}</text></view></view>
+    <view class="status"><image class="icon" src="/assets/icons/user-round.svg" mode="aspectFit" /><text>{{gradeLabel}}</text></view>
+  </view>
+
+  <view class="mine-hero">
+    <view><text class="mine-eyebrow">我的学习设置</text><text class="mine-title">每天 {{dailyGoal}} 题，轻松坚持</text><text class="mine-copy">按你的教材和年级安排练习</text></view>
+    <image class="rabbit mine-rabbit" src="/assets/thinking-rabbit-color.png" mode="aspectFit" />
+  </view>
+
+  <view class="current-learning-card">
+    <view class="current-learning-head"><view class="current-learning-icon"><image class="icon" src="/assets/icons/book-open.svg" mode="aspectFit" /></view><view><text class="current-learning-label">当前学习</text><text class="current-learning-title">{{currentLearningTitle}}</text></view></view>
+    <text class="current-learning-meta">{{currentLearningMeta}}</text>
+    <text class="current-learning-summary">{{currentLearningSummary}}</text>
+  </view>
+
+  <view class="setting-group learning-settings">
+    <text class="setting-title">练习设置</text>
+    <view class="setting-block">
+      <view class="setting-label"><image class="icon" src="/assets/icons/layers.svg" mode="aspectFit" /><text>学段</text></view>
+      <view class="segment-control"><button wx:for="{{schoolStageOptions}}" wx:key="value" class="segment-option {{schoolStage === item.value ? 'selected' : ''}}" data-value="{{item.value}}" bindtap="changeSchoolStage">{{item.label}}</button></view>
+    </view>
+    <view class="setting-block">
+      <view class="setting-label"><image class="icon" src="/assets/icons/gauge.svg" mode="aspectFit" /><text>当前难度</text></view>
+      <view class="segment-control"><button wx:for="{{difficultyOptions}}" wx:key="value" class="segment-option {{difficultyMode === item.value ? 'selected' : ''}}" data-value="{{item.value}}" bindtap="changeDifficulty">{{item.label}}</button></view>
+    </view>
+    <view class="setting-block">
+      <view class="setting-label"><image class="icon" src="/assets/icons/book-open.svg" mode="aspectFit" /><text>当前学期</text></view>
+      <view class="segment-control term-segment-control"><button wx:for="{{learningTermOptions}}" wx:key="value" class="segment-option {{learningTerm === item.value ? 'selected' : ''}}" data-value="{{item.value}}" bindtap="changeLearningTerm">{{item.label}}</button></view>
+    </view>
+    <view class="setting-block">
+      <view class="setting-label"><image class="icon" src="/assets/icons/target.svg" mode="aspectFit" /><text>每日目标</text></view>
+      <view class="segment-control"><button wx:for="{{dailyGoalOptions}}" wx:key="*this" class="segment-option {{dailyGoal === item ? 'selected' : ''}}" data-value="{{item}}" bindtap="changeDailyGoal">{{item}} 题</button></view>
+    </view>
+    <picker mode="selector" range="{{textbookLabels}}" value="{{textbookIndex}}" bindchange="selectTextbook"><view class="setting-row"><image class="icon" src="/assets/icons/book-open.svg" mode="aspectFit" /><text>教材版本</text><text class="setting-value">{{textbookLabel}} ›</text></view></picker>
+    <view class="setting-block grade-block">
+      <view class="setting-label"><image class="icon" src="/assets/icons/layers.svg" mode="aspectFit" /><text>年级</text></view>
+      <view class="grade-grid"><button wx:for="{{gradeOptions}}" wx:key="value" class="grade-option {{grade === item.value ? 'selected' : ''}} {{!item.available ? 'unavailable' : ''}}" data-value="{{item.value}}" bindtap="selectGrade"><text>{{item.value}}年级</text><text wx:if="{{!item.available}}" class="building-label">建设中</text></button></view>
+    </view>
+  </view>
+
+  <view class="setting-group"><text class="setting-title">使用设置</text><view class="setting-row"><image class="icon" src="/assets/icons/volume-2.svg" mode="aspectFit" /><text>答题音效</text><switch checked="{{soundEnabled}}" color="#7ea84e" bindchange="toggleSound" /></view><view class="setting-row bgm-row"><image class="icon" src="/assets/icons/gamepad-2.svg" mode="aspectFit" /><view class="setting-copy"><text>背景音乐</text><text class="setting-note">{{bgmTrackLabel}}，答题时自动压低</text></view><button class="track-switch" bindtap="switchBgmTrack"><image class="icon" src="/assets/icons/refresh-cw.svg" mode="aspectFit" /></button><switch checked="{{bgmEnabled}}" color="#7ea84e" bindchange="toggleBgm" /></view><view class="setting-row"><image class="icon" src="/assets/icons/bell.svg" mode="aspectFit" /><view class="setting-copy"><text>学习提醒</text><text class="setting-note">打开小程序时提示</text></view><switch checked="{{reminderEnabled}}" color="#7ea84e" bindchange="toggleReminder" /></view><view class="setting-row"><image class="icon" src="/assets/icons/shield-check.svg" mode="aspectFit" /><text>本地数据</text><text class="setting-value">仅本机保存</text></view></view>
+  <button class="primary-button" bindtap="goPractice">进入自主练习</button>
+  <button class="clear-button" bindtap="clearProgress">清除学习记录</button>
+  <view class="bottom-nav"><view class="nav-item" bindtap="goHome"><view class="nav-icon"><image class="icon" src="/assets/icons/house.svg" mode="aspectFit" /></view><text>今日</text></view><view class="nav-item" bindtap="goGames"><view class="nav-icon"><image class="icon" src="/assets/icons/gamepad-2.svg" mode="aspectFit" /></view><text>游戏</text></view><view class="nav-item" bindtap="goGrowth"><view class="nav-icon"><image class="icon" src="/assets/icons/chart-no-axes-column-increasing.svg" mode="aspectFit" /></view><text>成长</text></view><view class="nav-item active" bindtap="goMine"><view class="nav-icon"><image class="icon" src="/assets/icons/user-round.svg" mode="aspectFit" /></view><text>我的</text></view></view>
+</view>

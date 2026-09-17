@@ -1,0 +1,7 @@
+{
+  "desc": "梵数学本地预览",
+  "rules": [
+    { "action": "allow", "page": "pages/intro/intro" },
+    { "action": "disallow", "page": "*" }
+  ]
+}

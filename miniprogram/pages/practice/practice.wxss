@@ -1,0 +1,8 @@
+.practice-intro { margin: 18rpx 0 28rpx; padding: 28rpx; border: 2rpx solid #dce8d8; background: #f3faef; color: #60715d; }
+.practice-title { display: block; margin-bottom: 8rpx; color: #2f5132; font-size: 34rpx; font-weight: 800; }
+.practice-section { margin-top: 26rpx; }
+.practice-label { display: block; margin-bottom: 14rpx; color: #4a584b; font-size: 26rpx; font-weight: 800; }
+.choice-wrap { display: flex; flex-wrap: wrap; gap: 14rpx; }
+.filter-chip { min-height: 64rpx; padding: 0 20rpx; border: 2rpx solid #d9e3d6; border-radius: 8rpx; background: #fff; color: #536153; font-size: 23rpx; line-height: 60rpx; }
+.filter-chip.active { border-color: #7ea84e; background: #eaf5dd; color: #41651e; }
+.practice-start { margin-top: 44rpx; }

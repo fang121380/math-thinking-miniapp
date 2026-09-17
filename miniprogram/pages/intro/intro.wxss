@@ -1,0 +1,83 @@
+.intro-page {
+  padding-top: calc(50rpx + env(safe-area-inset-top));
+  text-align: center;
+}
+
+.intro-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 92rpx;
+  height: 92rpx;
+  margin: 0 auto;
+  border-radius: 16rpx;
+  background: #e7f2d5;
+}
+
+.intro-logo .icon { width: 50rpx; height: 50rpx; }
+.intro-title { display: block; margin-top: 34rpx; font-size: 56rpx; font-weight: 850; line-height: 1.3; }
+.intro-copy { display: block; width: 580rpx; max-width: 100%; margin: 14rpx auto 0; color: #6d786f; font-size: 25rpx; line-height: 1.65; }
+.intro-rabbit { width: 264rpx; height: 330rpx; margin: 24rpx auto 4rpx; }
+
+.grade-setup { margin: 34rpx 0 24rpx; text-align: left; }
+.edition-note { display: flex; align-items: center; gap: 12rpx; margin-bottom: 24rpx; color: #4f6d56; font-size: 24rpx; font-weight: 700; }
+.edition-note .icon { width: 30rpx; height: 30rpx; }
+.grade-setup-title { display: block; margin-bottom: 16rpx; font-size: 28rpx; font-weight: 800; }
+
+.stage-cards { display: grid; gap: 16rpx; }
+.stage-card {
+  display: grid;
+  grid-template-columns: 122rpx minmax(0, 1fr) 42rpx;
+  align-items: center;
+  gap: 18rpx;
+  min-height: 176rpx;
+  padding: 18rpx;
+  border: 2rpx solid #cbd9c7;
+  border-radius: 16rpx;
+  background: #fff;
+  color: #26382d;
+  text-align: left;
+}
+.stage-card:active { transform: translateY(1rpx); }
+.stage-card-primary { background: #f5faef; }
+.stage-card-junior { border-color: #c5d8dc; background: #f1f8f8; }
+.stage-card.selected { border-color: #df6a51; box-shadow: 0 10rpx 22rpx rgba(114, 77, 48, 0.12); }
+.stage-card-primary.selected { background: #eef8e5; }
+.stage-card-junior.selected { background: #eaf7f7; }
+.stage-card-visual { display: flex; align-items: center; justify-content: center; width: 122rpx; height: 122rpx; border-radius: 16rpx; background: #e4f1d6; }
+.stage-card-junior .stage-card-visual { background: #dceff0; }
+.stage-card-image { width: 66rpx; height: 66rpx; }
+.rabbit-card-image { width: 106rpx; height: 106rpx; }
+.stage-card-copy { min-width: 0; }
+.stage-card-topline { display: flex; justify-content: space-between; gap: 14rpx; color: #627467; font-size: 20rpx; font-weight: 800; }
+.stage-card-junior .stage-card-topline { color: #447074; }
+.stage-card-title, .stage-card-description { display: block; }
+.stage-card-title { margin-top: 6rpx; font-size: 32rpx; font-weight: 850; line-height: 1.3; }
+.stage-card-description { margin-top: 6rpx; color: #6d786f; font-size: 22rpx; line-height: 1.45; }
+.stage-card-check { display: flex; align-items: center; justify-content: center; width: 36rpx; height: 36rpx; border: 2rpx solid #cbd9c7; border-radius: 50%; }
+.stage-card-check .icon { width: 24rpx; height: 24rpx; opacity: 0; }
+.stage-card.selected .stage-card-check { border-color: #df6a51; background: #df6a51; }
+.stage-card.selected .stage-card-check .icon { opacity: 1; filter: brightness(0) invert(1); }
+
+.grade-picker { margin-top: 28rpx; padding-top: 26rpx; border-top: 2rpx solid #dce5da; }
+.grade-picker-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20rpx; }
+.grade-picker-head .grade-setup-title { margin-bottom: 6rpx; }
+.grade-picker-copy { display: block; color: #657168; font-size: 22rpx; line-height: 1.45; }
+.grade-picker-stage { flex: 0 0 auto; padding: 8rpx 12rpx; border-radius: 8rpx; background: #f4f6f2; color: #5c6d58; font-size: 20rpx; font-weight: 800; }
+.grade-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16rpx; margin-top: 20rpx; }
+.grade-button { min-height: 104rpx; border: 2rpx solid #cce0c5; border-radius: 12rpx; background: #f5faef; color: #294b32; font-size: 26rpx; font-weight: 800; }
+.grade-button:active { background: #e1f0d8; }
+
+.intro-list { margin-bottom: 34rpx; border-top: 2rpx solid #dce5da; border-bottom: 2rpx solid #dce5da; text-align: left; }
+.intro-row { display: flex; align-items: center; gap: 20rpx; min-height: 92rpx; font-size: 25rpx; font-weight: 700; }
+.intro-row + .intro-row { border-top: 2rpx solid #e1e8df; }
+.intro-row .icon { width: 32rpx; height: 32rpx; }
+.continue-link { margin: 20rpx auto 0; background: transparent; color: #617563; font-size: 24rpx; }
+
+@media (max-width: 340px) {
+  .intro-title { font-size: 50rpx; }
+  .stage-card { grid-template-columns: 104rpx minmax(0, 1fr) 36rpx; gap: 14rpx; min-height: 158rpx; }
+  .stage-card-visual { width: 104rpx; height: 104rpx; }
+  .stage-card-title { font-size: 29rpx; }
+  .stage-card-description { font-size: 20rpx; }
+}

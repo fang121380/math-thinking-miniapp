@@ -1,0 +1,46 @@
+<view class="page no-nav" wx:if="{{record}}" style="padding-top: {{safeTop}}px;">
+  <view class="page-head">
+    <button class="back-button" bindtap="goBack"><image class="icon" src="/assets/icons/arrow-left.svg" mode="aspectFit" /></button>
+    <text class="page-head-title">错题分析</text>
+    <view class="status">需要再想想</view>
+  </view>
+
+  <view class="wrong-summary">
+    <text class="wrong-eyebrow">{{record.prompt}}</text>
+    <text class="wrong-title">这一步的思路需要调整</text>
+    <text class="wrong-copy">不用急，先看清错在哪里，再做一道同类题。</text>
+  </view>
+
+  <view class="answer-compare">
+    <view class="compare-box"><text>你的答案</text><text class="compare-answer">{{record.studentAnswer}}</text></view>
+    <view class="compare-box correct"><text>正确答案</text><text class="compare-answer">{{record.correctAnswer}}</text></view>
+  </view>
+
+  <view class="analysis-section">
+    <text class="analysis-title">错因分析</text>
+    <view class="reason-box"><image class="icon" src="/assets/icons/search.svg" mode="aspectFit" /><text>{{record.reason}}</text></view>
+  </view>
+
+  <view class="analysis-section">
+    <text class="analysis-title">知识点总结</text>
+    <view class="reason-box"><text>{{record.knowledgeSummary}}</text></view>
+  </view>
+
+  <view class="analysis-section">
+    <text class="analysis-title">易错提醒</text>
+    <view class="reason-box"><text wx:for="{{record.mistakeSummary}}" wx:key="*this">{{item}}</text></view>
+  </view>
+
+  <view class="analysis-section">
+    <text class="analysis-title">分步解析</text>
+    <view class="solution-list">
+      <view wx:for="{{record.solutionSteps}}" wx:key="index" class="solution-step"><text class="step-number">{{index + 1}}</text><text>{{item}}</text></view>
+    </view>
+  </view>
+
+  <view class="analysis-actions">
+    <button class="secondary-button" bindtap="continueLearning">继续学习</button>
+    <button wx:if="{{hasRecovery}}" class="primary-button" bindtap="startRecovery"><text>{{recoveryActionLabel}}</text><image class="icon" src="/assets/icons/refresh-cw.svg" mode="aspectFit" /></button>
+    <button wx:else class="primary-button" bindtap="retrySimilar"><text>做一道同类题</text><image class="icon" src="/assets/icons/refresh-cw.svg" mode="aspectFit" /></button>
+  </view>
+</view>

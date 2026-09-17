@@ -1,0 +1,75 @@
+<view class="page no-nav intro-page" style="padding-top: {{safeTop}}px;">
+  <view class="intro-logo">
+    <image class="icon" src="/assets/icons/sparkles.svg" mode="aspectFit" />
+  </view>
+  <text class="intro-title">{{initialGradeConfirmed ? '先做 5 道起点小测' : '选择你的学习舞台'}}</text>
+  <text class="intro-copy">{{initialGradeConfirmed ? '人教版 · 约 3 分钟，帮你找到合适的练习起点。' : '先选学段和年级，再从适合你的数学内容开始。'}}</text>
+
+  <view wx:if="{{!initialGradeConfirmed}}" class="grade-setup">
+    <view class="edition-note">
+      <image class="icon" src="/assets/icons/book-open.svg" mode="aspectFit" />
+      <text>默认教材：人教版，可在“我的”里调整</text>
+    </view>
+
+    <text class="grade-setup-title">从这里开始</text>
+    <view class="stage-cards">
+      <button
+        wx:for="{{stageCards}}"
+        wx:key="value"
+        class="stage-card stage-card-{{item.value}} {{selectedSchoolStage === item.value ? 'selected' : ''}}"
+        data-stage="{{item.value}}"
+        bindtap="selectInitialStage"
+      >
+        <view class="stage-card-visual">
+          <image class="stage-card-image {{item.value === 'primary' ? 'rabbit-card-image' : 'lab-card-image'}}" src="{{item.icon}}" mode="aspectFit" />
+        </view>
+        <view class="stage-card-copy">
+          <view class="stage-card-topline"><text>{{item.label}}</text><text>{{item.gradeLabel}}</text></view>
+          <text class="stage-card-title">{{item.title}}</text>
+          <text class="stage-card-description">{{item.description}}</text>
+        </view>
+        <view class="stage-card-check"><image class="icon" src="/assets/icons/check.svg" mode="aspectFit" /></view>
+      </button>
+    </view>
+
+    <view wx:if="{{selectedSchoolStage}}" class="grade-picker">
+      <view class="grade-picker-head">
+        <view><text class="grade-setup-title">选择你的年级</text><text class="grade-picker-copy">{{selectedSchoolStage === 'primary' ? '选好后，先做一组轻量起点小测。' : '选好后，先从一组代表性思维题开始。'}}</text></view>
+        <text class="grade-picker-stage">{{selectedSchoolStage === 'primary' ? '成长岛' : '实验室'}}</text>
+      </view>
+      <view class="grade-grid">
+        <button
+          wx:for="{{gradeOptions}}"
+          wx:key="value"
+          class="grade-button"
+          data-grade="{{item.value}}"
+          bindtap="selectInitialGrade"
+        >{{item.label}}</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:else>
+    <image class="rabbit intro-rabbit" src="/assets/thinking-rabbit-color.png" mode="aspectFit" />
+    <view class="intro-list">
+      <view class="intro-row">
+        <image class="icon" src="/assets/icons/clock-3.svg" mode="aspectFit" />
+        <text>大约 3 分钟</text>
+      </view>
+      <view class="intro-row">
+        <image class="icon" src="/assets/icons/layers.svg" mode="aspectFit" />
+        <text>5 道起点小测，轻量又有代表性</text>
+      </view>
+      <view class="intro-row">
+        <image class="icon" src="/assets/icons/shield-check.svg" mode="aspectFit" />
+        <text>结果只用于安排接下来的练习</text>
+      </view>
+    </view>
+
+    <button class="primary-button" bindtap="startTest">
+      <text>{{diagnosticInProgress ? '继续起点小测' : hasProgress ? '重新摸底' : '开始起点小测'}}</text>
+      <image class="icon" src="/assets/icons/arrow-right.svg" mode="aspectFit" />
+    </button>
+    <button wx:if="{{hasProgress}}" class="continue-link" bindtap="continueHome">继续已有进度</button>
+  </view>
+</view>

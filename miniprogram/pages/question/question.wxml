@@ -1,0 +1,41 @@
+<view class="page no-nav" style="padding-top: {{safeTop}}px;">
+  <view class="page-head">
+    <button class="back-button" bindtap="goBack"><image class="icon" src="/assets/icons/arrow-left.svg" mode="aspectFit" /></button>
+    <text class="page-head-title">{{sourceLabel}}</text>
+    <view class="status">{{index + 1}} / {{total}}</view>
+  </view>
+
+  <view class="progress-row"><text>{{typeLabel}}</text><text class="progress-muted">{{levelLabel}}</text></view>
+  <view class="track"><view class="track-fill" style="width: {{progressPercent}}%"></view></view>
+
+  <view class="question-area">
+    <view class="question-label"><image class="icon" src="/assets/icons/notebook-pen.svg" mode="aspectFit" /><text>{{typeLabel}}</text></view>
+    <text class="question-title">{{question.prompt}}</text>
+    <text class="question-help">先想清楚方法，再提交答案。</text>
+
+    <view class="panel">
+      <view wx:if="{{question.type === 'choice'}}" class="answer-grid">
+        <button wx:for="{{question.displayOptions}}" wx:key="value" class="answer-button {{selectedAnswer === item.value ? 'selected' : ''}}" data-value="{{item.value}}" bindtap="chooseOption">{{item.label}}</button>
+      </view>
+
+      <view wx:if="{{question.type === 'fill'}}" class="fill-wrap">
+        <input class="answer-input" value="{{answer}}" placeholder="{{question.answerUnit ? '填写答案和单位' : '填写答案'}}" bindinput="onAnswerInput" />
+      </view>
+
+      <view wx:if="{{question.type === 'problem'}}" class="problem-wrap">
+        <textarea class="work-input" value="{{work}}" placeholder="写下你的列式或思路" bindinput="onWorkInput" />
+        <input class="final-input" value="{{answer}}" placeholder="{{question.answerUnit ? '最后答案和单位' : '最后答案'}}" bindinput="onAnswerInput" />
+      </view>
+
+      <button wx:if="{{!showHint}}" class="hint-button" bindtap="showHint"><image class="icon" src="/assets/icons/lightbulb.svg" mode="aspectFit" /><text>提示</text></button>
+      <view wx:else class="hint-row"><image class="icon" src="/assets/icons/lightbulb.svg" mode="aspectFit" /><text>{{question.hint}}</text></view>
+    </view>
+  </view>
+
+  <view wx:if="{{feedback}}" class="knowledge-feedback">
+    <text class="feedback-title">知识点总结</text><text>{{feedback.knowledgeSummary}}</text>
+    <text class="feedback-title">易错提醒</text><text wx:for="{{feedback.mistakeSummary}}" wx:key="*this">{{item}}</text>
+  </view>
+  <button wx:if="{{!feedback}}" class="primary-button submit-button" bindtap="submitAnswer"><text>提交答案</text><image class="icon" src="/assets/icons/check.svg" mode="aspectFit" /></button>
+  <button wx:else class="primary-button submit-button" bindtap="continueAfterFeedback"><text>{{nextLabel}}</text><image class="icon" src="/assets/icons/arrow-right.svg" mode="aspectFit" /></button>
+</view>
