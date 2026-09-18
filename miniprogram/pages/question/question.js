@@ -2,9 +2,7 @@ const { getQuestionBank } = require('../../utils/question-bank');
 const {
   buildRecoverySet,
   resolveDailyQuestionIds,
-  updateSkillState,
-  updateKnowledgeState,
-  updateWeakKnowledgePoints,
+  applyAdaptiveOutcome,
   recordDailyCompletion,
   recordRecoveryWin,
   createMistakeRecord,
@@ -237,22 +235,11 @@ Page({
       wx.redirectTo({ url: this.isSelfPractice ? '/pages/practice/practice' : '/pages/home/home' });
       return;
     }
-    const currentSkill = progress.skillState[question.knowledgePoint] || {
-      level: progress.level,
-      consecutiveCorrect: 0,
-      consecutiveWrong: 0,
-    };
-    const nextSkill = updateSkillState(currentSkill, { correct, usedHint });
-    const nextKnowledge = updateKnowledgeState(
-      progress.knowledgeState[question.knowledgePoint],
+    const adaptiveProgress = applyAdaptiveOutcome(
+      progress,
+      question,
       { correct, usedHint },
       todayKey(),
-    );
-    const weakKnowledgePoints = updateWeakKnowledgePoints(
-      progress.weakKnowledgePoints,
-      question.knowledgePoint,
-      nextSkill,
-      { correct, usedHint },
     );
     const completedIds = Array.from(new Set([...progress.completedIds, question.id]));
     const dailyCompleted = this.isRecovery || this.isRetry || this.isSelfPractice ? progress.dailyCompleted : Math.max(progress.dailyCompleted, index + 1);
@@ -299,10 +286,10 @@ Page({
         stars: progress.stars + earnedStars,
         recoveryWins,
         selfPracticeIndex: this.isRecovery ? progress.selfPracticeIndex : this.isSelfPractice ? Math.min(index + 1, total) : progress.selfPracticeIndex,
-        skillState: { ...progress.skillState, [question.knowledgePoint]: nextSkill },
-        knowledgeState: { ...progress.knowledgeState, [question.knowledgePoint]: nextKnowledge },
-        weakKnowledgePoints,
-        level: nextSkill.level,
+        skillState: adaptiveProgress.skillState,
+        knowledgeState: adaptiveProgress.knowledgeState,
+        weakKnowledgePoints: adaptiveProgress.weakKnowledgePoints,
+        level: adaptiveProgress.level,
         mistakes,
         recoveryState,
       });

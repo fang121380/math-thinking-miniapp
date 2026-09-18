@@ -61,8 +61,8 @@ test('daily practice saves knowledge review state and home renders a mission foc
   const question = fs.readFileSync(path.join(miniprogram, 'pages/question/question.js'), 'utf8');
   const homeJs = fs.readFileSync(path.join(miniprogram, 'pages/home/home.js'), 'utf8');
   const homeWxml = fs.readFileSync(path.join(miniprogram, 'pages/home/home.wxml'), 'utf8');
-  assert.match(question, /updateKnowledgeState/);
-  assert.match(question, /knowledgeState:\s*\{\s*\.\.\.progress\.knowledgeState/s);
+  assert.match(question, /applyAdaptiveOutcome/);
+  assert.match(question, /knowledgeState:\s*adaptiveProgress\.knowledgeState/);
   assert.match(homeJs, /describeMissionFocus/);
   assert.match(homeJs, /missionFocus/);
   assert.match(homeWxml, /\{\{missionFocus\}\}/);

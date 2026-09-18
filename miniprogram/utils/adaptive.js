@@ -468,8 +468,50 @@ function updateWeakKnowledgePoints(current, knowledgePoint, nextSkill, result) {
   const existing = Array.isArray(current) ? current.filter(Boolean) : [];
   const withoutCurrent = existing.filter((item) => item !== knowledgePoint);
   if (!result.correct) return [knowledgePoint, ...withoutCurrent].slice(0, 8);
+  if (result.usedHint) return [knowledgePoint, ...withoutCurrent].slice(0, 8);
   if (!result.usedHint && Number(nextSkill.level) >= 2) return withoutCurrent;
   return existing;
+}
+
+function applyAdaptiveOutcome(profile = {}, question = {}, result = {}, date) {
+  const knowledgePoint = question.knowledgePoint;
+  if (!knowledgePoint) return { ...profile };
+  const skillState = profile.skillState && typeof profile.skillState === 'object'
+    ? profile.skillState
+    : {};
+  const knowledgeState = profile.knowledgeState && typeof profile.knowledgeState === 'object'
+    ? profile.knowledgeState
+    : {};
+  const currentSkill = skillState[knowledgePoint] || {
+    level: profile.level,
+    consecutiveCorrect: 0,
+    consecutiveWrong: 0,
+  };
+  const nextSkill = updateSkillState(currentSkill, result);
+  const nextKnowledge = updateKnowledgeState(knowledgeState[knowledgePoint], result, date);
+  return {
+    ...profile,
+    skillState: { ...skillState, [knowledgePoint]: nextSkill },
+    knowledgeState: { ...knowledgeState, [knowledgePoint]: nextKnowledge },
+    weakKnowledgePoints: updateWeakKnowledgePoints(
+      profile.weakKnowledgePoints,
+      knowledgePoint,
+      nextSkill,
+      result,
+    ),
+    level: nextSkill.level,
+  };
+}
+
+function replayAdaptiveSequence(profile, events = [], fallbackDate) {
+  return (Array.isArray(events) ? events : []).reduce((current, event) => (
+    applyAdaptiveOutcome(
+      current,
+      event && event.question,
+      event && event.result,
+      event && event.date ? event.date : fallbackDate,
+    )
+  ), { ...profile });
 }
 
 function recordDailyCompletion(profile, date) {
@@ -558,6 +600,8 @@ module.exports = {
   seededShuffle,
   updateSkillState,
   updateWeakKnowledgePoints,
+  applyAdaptiveOutcome,
+  replayAdaptiveSequence,
   updateKnowledgeState,
   getDueKnowledgePoints,
   recordDailyCompletion,

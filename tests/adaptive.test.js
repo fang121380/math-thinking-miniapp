@@ -8,6 +8,7 @@ const {
   resolveDailyQuestionIds,
   updateSkillState,
   updateWeakKnowledgePoints,
+  replayAdaptiveSequence,
   recordDailyCompletion,
   createMistakeRecord,
 } = require('../miniprogram/utils/adaptive');
@@ -285,6 +286,44 @@ test('practice results continuously add and retire weak knowledge points', () =>
     level: 3, consecutiveCorrect: 2,
   }, { correct: true, usedHint: true });
   assert.deepEqual(afterHint, ['hint_topic']);
+});
+
+test('adaptive replay isolates knowledge points and keeps hinted answers in recovery', () => {
+  const result = replayAdaptiveSequence({
+    level: 3,
+    weakKnowledgePoints: [],
+    skillState: {},
+    knowledgeState: {},
+  }, [
+    { question: { knowledgePoint: 'fractions' }, result: { correct: false, usedHint: false } },
+    { question: { knowledgePoint: 'geometry' }, result: { correct: true, usedHint: true } },
+  ], '2026-09-18');
+
+  assert.equal(result.knowledgeState.fractions.mastery, 32);
+  assert.equal(result.knowledgeState.geometry.mastery, 57);
+  assert.equal(result.skillState.fractions.consecutiveWrong, 1);
+  assert.equal(result.skillState.geometry.consecutiveCorrect, 0);
+  assert.deepEqual(result.weakKnowledgePoints, ['geometry', 'fractions']);
+});
+
+test('adaptive replay lowers only the repeatedly wrong knowledge point', () => {
+  const result = replayAdaptiveSequence({
+    level: 3,
+    skillState: {
+      fractions: { level: 3, consecutiveCorrect: 0, consecutiveWrong: 0 },
+      geometry: { level: 3, consecutiveCorrect: 0, consecutiveWrong: 0 },
+    },
+    knowledgeState: {},
+    weakKnowledgePoints: [],
+  }, [
+    { question: { knowledgePoint: 'fractions' }, result: { correct: false, usedHint: false } },
+    { question: { knowledgePoint: 'fractions' }, result: { correct: false, usedHint: false } },
+    { question: { knowledgePoint: 'geometry' }, result: { correct: true, usedHint: false } },
+  ], '2026-09-18');
+
+  assert.equal(result.skillState.fractions.level, 2);
+  assert.equal(result.skillState.geometry.level, 3);
+  assert.deepEqual(result.weakKnowledgePoints, ['fractions']);
 });
 
 test('daily completion dates update a real consecutive-day streak idempotently', () => {
