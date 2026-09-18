@@ -20,7 +20,7 @@ const requiredFields = [
   'reviewStatus',
   'reviewedAt',
 ];
-const { supplementalPracticeQuestions } = require('./question-bank-content');
+const { supplementalPracticeQuestions, thinkingPracticeQuestions } = require('./question-bank-content');
 const { buildEditionPracticeQuestions, buildEditionDiagnosticQuestions } = require('./question-bank-edition-data');
 const { buildEntryDiagnosticQuestions } = require('./question-bank-entry-diagnostic');
 const { getJuniorQuestionBank, regenerateJuniorQuestion } = require('./question-bank-junior-data');
@@ -59,6 +59,17 @@ const examPatterns = [
   'combination_strategy',
   'calculation_model',
 ];
+const taskTypes = [
+  'direct_calculation',
+  'estimate_explain',
+  'method_compare',
+  'error_analysis',
+  'reverse_reasoning',
+  'modeling',
+  'condition_reasoning',
+  'multi_step_calculation',
+];
+const representations = ['numeric', 'context', 'diagram', 'table_chart'];
 const answerUnits = [
   '立方千米', '立方米', '立方分米', '立方厘米', '平方千米', '平方公里', '平方米', '平方分米', '平方厘米',
   '千米', '毫米', '厘米', '分米', '米', '公顷', '千克', '毫升', '小时', '分钟', '吨', '克', '升', '元', '角', '分', '秒', '度',
@@ -155,6 +166,7 @@ function inferExamPattern(item) {
   const prompt = String(item.prompt || '');
   if (prompt.includes('□')) return 'reverse_reasoning';
   if (/估|接近|大约|范围/.test(prompt)) return 'estimate_check';
+  if (/错误|不对|错在|哪一步/.test(prompt)) return 'condition_filter';
   if (/平均|统计|数据|记录|图表|得分/.test(prompt)) return 'data_reading';
   if (/厘米|米|千米|克|千克|元|角|分|时|分钟|小时|长度|质量|单位/.test(prompt)) return 'unit_check';
   if (/至少|平均分|一共|剩下|每组|总数|总量|几锅|组合/.test(prompt)) return 'combination_strategy';
@@ -188,9 +200,44 @@ function withReviewMetadata(item) {
       : item.textbookId === 'rjb' ? 'shandong' : 'nationwide'),
     sourceYear: item.sourceYear || String(2022 + (seed % 5)),
     examPattern: inferExamPattern(item),
+    taskType: item.taskType || inferTaskType(item),
+    representation: item.representation || inferRepresentation(item),
+    reasoningDepth: item.reasoningDepth || inferReasoningDepth(item),
+    misconception: item.misconception || inferMisconception(item),
     reviewStatus: item.reviewStatus || 'auto-checked',
     reviewedAt: item.reviewedAt || '2026-07-31',
   };
+}
+
+function inferTaskType(item) {
+  const prompt = String(item.prompt || '');
+  if (/错误|不对|错在|哪一步/.test(prompt)) return 'error_analysis';
+  if (/方法|哪种|比较|更合理|更快/.test(prompt)) return 'method_compare';
+  if (/已知|反推|填□|填空/.test(prompt) && item.knowledgePoint && /division|multiply|operation/.test(item.knowledgePoint)) return 'reverse_reasoning';
+  if (/估|接近|大约|范围/.test(prompt)) return 'estimate_explain';
+  if (/至少|平均分|一共|剩下|总数|总量/.test(prompt)) return 'modeling';
+  if (/规律|观察|判断|哪组|是否/.test(prompt)) return 'condition_reasoning';
+  return item.type === 'problem' ? 'multi_step_calculation' : 'direct_calculation';
+}
+
+function inferRepresentation(item) {
+  const text = [item.prompt, item.hint, item.solution && item.solution.summary].filter(Boolean).join(' ');
+  if (/表格|统计图|条形图/.test(text)) return 'table_chart';
+  if (/图形|角|正方体|三角形|长方形|平行/.test(text)) return 'diagram';
+  if (/生活|学校|小组|购买|花坛|书架|卡纸/.test(text)) return 'context';
+  return 'numeric';
+}
+
+function inferReasoningDepth(item) {
+  const taskType = item.taskType || inferTaskType(item);
+  if (['error_analysis', 'method_compare', 'reverse_reasoning', 'modeling'].includes(taskType)) return 3;
+  if (['estimate_explain', 'condition_reasoning', 'multi_step_calculation'].includes(taskType)) return 2;
+  return 1;
+}
+
+function inferMisconception(item) {
+  const mistakes = Array.isArray(item.commonMistakes) ? item.commonMistakes : [];
+  return mistakes[0] || '';
 }
 
 function withCurriculumMetadata(item) {
@@ -662,6 +709,7 @@ divisionProblemVariants.forEach((item, index) => {
 });
 
 practiceQuestions.push(...supplementalPracticeQuestions.map(question));
+practiceQuestions.push(...thinkingPracticeQuestions.map(question));
 gradeBanks.forEach((bank) => {
   diagnosticQuestions.push(...bank.diagnosticQuestions.map(question));
   practiceQuestions.push(...bank.practiceQuestions.map(question));
@@ -925,6 +973,12 @@ function validateQuestion(item) {
   if (!['nationwide', 'shandong', 'jining'].includes(item.sourceRegion)) return false;
   if (!/^20(2[2-6])$/.test(item.sourceYear)) return false;
   if (!examPatterns.includes(item.examPattern)) return false;
+  if (item.schoolStage !== 'junior') {
+    if (!taskTypes.includes(item.taskType)) return false;
+    if (!representations.includes(item.representation)) return false;
+    if (!Number.isInteger(item.reasoningDepth) || item.reasoningDepth < 1 || item.reasoningDepth > 3) return false;
+    if (typeof item.misconception !== 'string' || !item.misconception.trim()) return false;
+  }
   if (item.schoolStage === 'junior') {
     if (!/^jr-/.test(item.textbookId) || ![7, 8, 9].includes(item.grade)) return false;
     if (!['easy', 'medium', 'hard'].includes(item.difficulty)) return false;
@@ -1028,12 +1082,17 @@ function evaluateArithmeticExpression(expression) {
   return result === null || pointer !== tokens.length || !Number.isFinite(result) ? null : result;
 }
 
-function estimateTargetStep(prompt) {
-  const text = String(prompt || '');
+function estimateTargetStep(value) {
+  const item = value && typeof value === 'object' ? value : null;
+  const text = String(item ? item.prompt : value || '');
   if (text.includes('整百数')) return 100;
   if (text.includes('整十数')) return 10;
   if (text.includes('整数')) return 1;
   if (text.includes('范围')) return 'range';
+  if (item) {
+    const targets = { hundreds: 100, tens: 10, integer: 1, range: 'range', strategy: 'range' };
+    return targets[item.roundingTarget] || null;
+  }
   return null;
 }
 
@@ -1051,7 +1110,7 @@ function expectedCalculatedAnswer(item, calculated) {
     return null;
   }
   if (item.examPattern === 'estimate_check') {
-    const step = estimateTargetStep(item.prompt);
+    const step = estimateTargetStep(item);
     if (typeof step === 'number') return Math.round(calculated / step) * step;
     return null;
   }
@@ -1217,7 +1276,7 @@ function auditQuestion(item) {
   }
 
   if (item && item.examPattern === 'estimate_check') {
-    const targetStep = estimateTargetStep(item.prompt);
+    const targetStep = estimateTargetStep(item);
     if (targetStep === null) issues.push('estimate_target_missing');
     if (item.calculationExpression && targetStep !== null && targetStep !== 'range') {
       const calculated = evaluateArithmeticExpression(item.calculationExpression);

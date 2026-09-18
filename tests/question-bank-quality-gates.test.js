@@ -123,3 +123,24 @@ test('a textbook scope never reuses the same mathematical condition between diag
     });
   });
 });
+
+test('grade-four upper practice adds auditable thinking-task metadata across its three core topics', () => {
+  const rows = getQuestions({ schoolStage: 'primary', textbookId: 'rjb', grade: 4, term: '上册', bank: 'practice' })
+    .filter((item) => item.id.startsWith('p-thinking-g4-'));
+  assert.equal(rows.length, 36);
+  assert.deepEqual(
+    [...new Set(rows.map((item) => item.knowledgePoint))].sort(),
+    ['division_estimation', 'division_exact', 'multiply_estimation'],
+  );
+  rows.forEach((item) => {
+    assert.match(item.taskType, /^(condition_reasoning|error_analysis|estimate_explain|method_compare|reverse_reasoning)$/);
+    assert.match(item.representation, /^(context|numeric)$/);
+    assert.ok(item.reasoningDepth >= 2 && item.reasoningDepth <= 3);
+    assert.ok(item.misconception);
+    assert.equal(item.reviewStatus, 'auto-checked');
+  });
+  assert.deepEqual(
+    [...new Set(rows.map((item) => item.taskType))].sort(),
+    ['condition_reasoning', 'error_analysis', 'estimate_explain', 'method_compare', 'reverse_reasoning'],
+  );
+});

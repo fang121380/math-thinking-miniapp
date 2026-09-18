@@ -53,7 +53,7 @@ test('external questions require complete verifiable rights and curriculum evide
 
 test('complete published catalog is explicitly project-original and passes source admission', () => {
   const questions = collectPublishedQuestions();
-  assert.equal(questions.length, 21261);
+  assert.equal(questions.length, 21297);
   assert.ok(questions.every((question) => question.sourceType === 'project-original'));
   assert.deepEqual(questions.flatMap(auditQuestionSourceAdmission), []);
 

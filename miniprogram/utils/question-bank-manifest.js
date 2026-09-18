@@ -1,12 +1,12 @@
 module.exports = {
-  version: '2026.09.17.1',
-  updatedAt: '2026-09-17',
+  version: '2026.09.18.1',
+  updatedAt: '2026-09-18',
   minimumAppVersion: '1.0.0',
   updateEndpoint: '',
   releaseNote: {
-    version: '2026.09.17.1',
+    version: '2026.09.18.1',
     title: '题库已优化',
-    copy: '估算题的讲解和观察物体的题意更清楚了，今天的练习会重新安排。',
+    copy: '四年级上册新增估算解释、方法比较、错误分析和逆向推理题，练习会按思维任务重新安排。',
   },
   edition: { id: 'multi', label: '八版本教材' },
   enabledGrades: [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -17,6 +17,6 @@ module.exports = {
     referenceBasis: ['义务教育数学课程标准（2022年版）', '各教材公开目录与单元侧重', '全国公开真题和模拟题的题型结构'],
   },
   externalCommercialContent: false,
-  catalog: { diagnostic: 5088, practice: 10710, juniorScopes: 24, juniorDiagnosticPerScope: 5, juniorPracticePerScope: 216 },
+  catalog: { diagnostic: 5088, practice: 10746, juniorScopes: 24, juniorDiagnosticPerScope: 5, juniorPracticePerScope: 216 },
   updatePolicy: '人工审校后按版本发布；新增题目必须通过结构、答案和题型覆盖测试。',
 };

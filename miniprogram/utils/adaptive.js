@@ -174,7 +174,10 @@ function normalizeDailyMissionMode(value) {
 }
 
 function isThinkingPattern(item) {
-  return Boolean(item && item.examPattern && item.examPattern !== 'calculation_model');
+  return Boolean(item && (
+    (item.examPattern && item.examPattern !== 'calculation_model')
+    || (item.taskType && !['direct_calculation', 'multi_step_calculation'].includes(item.taskType))
+  ));
 }
 
 function seenQuestionIds(profile) {

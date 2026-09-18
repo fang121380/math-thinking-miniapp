@@ -11,7 +11,7 @@ test('exhaustive audit visits every public scope and reports a clean per-questio
   const questions = collectPublishedQuestions();
   const report = auditEveryPublishedQuestion(questions);
 
-  assert.equal(questions.length, 21261);
+  assert.equal(questions.length, 21297);
   assert.equal(report.checked, questions.length);
   assert.equal(report.errors.length, 0);
   assert.equal(report.unique.ids, questions.length);
