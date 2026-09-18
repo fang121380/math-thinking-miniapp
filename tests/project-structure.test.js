@@ -285,6 +285,18 @@ test('mine page exposes persisted difficulty, goal, textbook, and grade controls
   assert.match(pageJs, /题库建设中/);
 });
 
+test('mine page exposes validated local progress backup and restore actions', () => {
+  const pageJs = fs.readFileSync(path.join(miniprogram, 'pages/mine/mine.js'), 'utf8');
+  const wxml = fs.readFileSync(path.join(miniprogram, 'pages/mine/mine.wxml'), 'utf8');
+  assert.match(pageJs, /serializeProgressBackup/);
+  assert.match(pageJs, /parseProgressBackup/);
+  assert.match(pageJs, /wx\.setClipboardData/);
+  assert.match(pageJs, /wx\.getClipboardData/);
+  assert.match(pageJs, /当前学习记录会替换/);
+  assert.match(wxml, /bindtap="exportProgress"/);
+  assert.match(wxml, /bindtap="importProgress"/);
+});
+
 test('mine page gives current learning a meaningful first-viewport card', () => {
   const pageJs = fs.readFileSync(path.join(miniprogram, 'pages/mine/mine.js'), 'utf8');
   const wxml = fs.readFileSync(path.join(miniprogram, 'pages/mine/mine.wxml'), 'utf8');

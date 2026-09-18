@@ -12,6 +12,7 @@ const { BGM_TRACKS, syncBackgroundMusic } = require('../../utils/background-musi
 const { getLearningMap, getTextbookOptions } = require('../../utils/textbook-catalog');
 const { createAudioFeedback } = require('../../utils/audio-feedback');
 const { buildShareMessage } = require('../../utils/share');
+const { serializeProgressBackup, parseProgressBackup } = require('../../utils/progress-backup');
 
 Page({
   data: {
@@ -204,6 +205,47 @@ Page({
     }
   },
   toggleReminder(event) { this.audio.play('setting'); this.savePreference({ reminderEnabled: event.detail.value }); },
+  exportProgress() {
+    try {
+      const text = serializeProgressBackup(createProgressStore().load());
+      wx.setClipboardData({
+        data: text,
+        success: () => wx.showToast({ title: '备份已复制', icon: 'success' }),
+        fail: () => wx.showToast({ title: '复制失败，请重试', icon: 'none' }),
+      });
+    } catch (error) {
+      wx.showToast({ title: '备份生成失败', icon: 'none' });
+    }
+  },
+  importProgress() {
+    wx.getClipboardData({
+      success: (result) => {
+        const parsed = parseProgressBackup(result && result.data);
+        if (!parsed.ok) {
+          wx.showToast({ title: '备份无效或已损坏', icon: 'none' });
+          return;
+        }
+        wx.showModal({
+          title: '恢复本地备份？',
+          content: '当前学习记录会替换为备份中的记录。',
+          confirmText: '确认恢复',
+          confirmColor: '#7ea84e',
+          success: (modal) => {
+            if (!modal.confirm) return;
+            try {
+              const next = createProgressStore().save(parsed.progress);
+              this.syncSettings(next);
+              wx.showToast({ title: '恢复成功', icon: 'success' });
+            } catch (error) {
+              wx.showToast({ title: '恢复失败，请重试', icon: 'none' });
+            }
+          },
+          fail: () => wx.showToast({ title: '确认窗口没打开，请再点一次', icon: 'none' }),
+        });
+      },
+      fail: () => wx.showToast({ title: '读取剪贴板失败', icon: 'none' }),
+    });
+  },
   clearProgress() {
     this.audio.play('setting');
     wx.showModal({
