@@ -37,6 +37,13 @@ test('backup parser rejects malformed, unsupported, and tampered clipboard data'
   assert.deepEqual(parseProgressBackup(JSON.stringify(tampered)), { ok: false, error: 'checksum_mismatch' });
 });
 
+test('backup parser accepts a valid envelope for later progress normalization', () => {
+  const raw = serializeProgressBackup({ stars: 1, mistakes: 'corrupt' }, '2026-09-18T00:00:00.000Z');
+  const parsed = parseProgressBackup(raw);
+  assert.equal(parsed.ok, true);
+  assert.equal(parsed.progress.mistakes, 'corrupt');
+});
+
 test('backup envelope checksum is independent of progress key order', () => {
   const first = createBackupEnvelope({ stars: 1, grade: 4 }, '2026-09-18');
   const second = createBackupEnvelope({ grade: 4, stars: 1 }, '2026-09-18');

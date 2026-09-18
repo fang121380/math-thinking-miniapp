@@ -52,6 +52,30 @@ function belongsToActiveSession(question, progress) {
     && question.term === progress.learningTerm;
 }
 
+function questionAttemptKey(progress, context) {
+  const questionId = context.questionId || '';
+  if (context.isRecovery) {
+    const state = progress.recoveryState || {};
+    return [
+      'recovery', context.recoveryStage, state.originalQuestionId,
+      state.bridgeQuestionId, state.remixQuestionId, state.stage, questionId,
+    ].join('|');
+  }
+  if (context.isRetry) return `retry|${questionId}`;
+  if (context.isSelfPractice) {
+    const filters = progress.selfPracticeFilters || {};
+    return [
+      'self', filters.attemptNonce || 0,
+      (progress.selfPracticeQuestionIds || []).join(','), context.index, questionId,
+    ].join('|');
+  }
+  return [
+    'daily', progress.dailySetDate, progress.dailySetNonce,
+    progress.contentBankVersion, (progress.dailyQuestionIds || []).join(','),
+    context.index, questionId,
+  ].join('|');
+}
+
 function nextLearningUrl(progress, source, nextIndex) {
   const isSelfPractice = source === 'self';
   const total = isSelfPractice ? progress.selfPracticeQuestionIds.length : progress.dailyQuestionIds.length;
@@ -171,6 +195,16 @@ Page({
       return;
     }
 
+    this.submissionCommitted = false;
+    this.questionAttemptKey = questionAttemptKey(progress, {
+      isRecovery: this.isRecovery,
+      recoveryStage: this.recoveryStage,
+      isRetry: this.isRetry,
+      isSelfPractice: this.isSelfPractice,
+      index,
+      questionId: question.id,
+    });
+
     const total = this.isRecovery || this.isRetry
       ? 1
       : this.isSelfPractice ? progress.selfPracticeQuestionIds.length : progress.dailyQuestionIds.length;
@@ -208,6 +242,7 @@ Page({
   showHint() { this.audio.play('tap'); this.setData({ showHint: true, usedHint: true }); },
 
   submitAnswer() {
+    if (this.submissionCommitted) return;
     const { question, answer, usedHint, index, total } = this.data;
     if (!canonicalizeMathAnswer(answer)) {
       wx.showToast({ title: '先填写答案', icon: 'none' });
@@ -218,6 +253,25 @@ Page({
     const progress = store.load();
     if (this.questionSessionKey && this.questionSessionKey !== learningSessionKey(progress)) {
       wx.showToast({ title: '学习设置已更新，请从新题目开始', icon: 'none' });
+      wx.redirectTo({
+        url: this.isSelfPractice ? '/pages/practice/practice' : '/pages/home/home',
+        fail: () => wx.showToast({ title: activityMessage('navigation_failed'), icon: 'none' }),
+      });
+      return;
+    }
+
+    const activeAttemptKey = questionAttemptKey(progress, {
+      isRecovery: this.isRecovery,
+      recoveryStage: this.recoveryStage,
+      isRetry: this.isRetry,
+      isSelfPractice: this.isSelfPractice,
+      index,
+      questionId: question.id,
+    });
+    const dailyExpired = !this.isRecovery && !this.isRetry && !this.isSelfPractice
+      && progress.dailySetDate !== todayKey();
+    if (dailyExpired || activeAttemptKey !== this.questionAttemptKey) {
+      wx.showToast({ title: '题目已更新，请从当前练习继续', icon: 'none' });
       wx.redirectTo({
         url: this.isSelfPractice ? '/pages/practice/practice' : '/pages/home/home',
         fail: () => wx.showToast({ title: activityMessage('navigation_failed'), icon: 'none' }),
@@ -293,6 +347,7 @@ Page({
         mistakes,
         recoveryState,
       });
+      this.submissionCommitted = true;
     } catch (error) {
       wx.showToast({ title: activityMessage('save_failed'), icon: 'none' });
       return;

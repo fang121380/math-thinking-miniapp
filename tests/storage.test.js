@@ -28,6 +28,32 @@ test('missing or corrupt data falls back to a fresh progress record', () => {
   assert.deepEqual(corrupt.load(), defaultProgress());
 });
 
+test('saving imported progress normalizes corrupt collection fields before the pages read them', () => {
+  const store = createProgressStore(memoryAdapter(undefined));
+  const progress = store.save({
+    ...defaultProgress(),
+    mistakes: 'bad',
+    completedIds: ['ok', 4],
+    dailyQuestionIds: { bad: true },
+    stars: 'nine',
+    dailyCompleted: -2,
+    level: 99,
+    abilities: { calculation: 140, problem: 'bad' },
+    weakAbilities: ['calculation', 'unknown'],
+    weakKnowledgePoints: ['valid', 3],
+  });
+  assert.deepEqual(progress.mistakes, []);
+  assert.deepEqual(progress.completedIds, ['ok']);
+  assert.deepEqual(progress.dailyQuestionIds, []);
+  assert.equal(progress.stars, 0);
+  assert.equal(progress.dailyCompleted, 0);
+  assert.equal(progress.level, 4);
+  assert.equal(progress.abilities.calculation, 100);
+  assert.equal(progress.abilities.problem, 70);
+  assert.deepEqual(progress.weakAbilities, ['calculation']);
+  assert.deepEqual(progress.weakKnowledgePoints, ['valid']);
+});
+
 test('saving progress preserves a completed diagnostic profile', () => {
   const adapter = memoryAdapter(undefined);
   const store = createProgressStore(adapter);

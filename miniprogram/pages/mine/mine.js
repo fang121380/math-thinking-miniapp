@@ -64,6 +64,7 @@ Page({
   },
 
   syncSettings(progress) {
+    this.soundEnabled = progress.soundEnabled;
     const textbookOptions = getTextbookOptions(progress.schoolStage);
     const gradeOptions = getGradeOptions(progress.schoolStage);
     const textbookIndex = Math.max(

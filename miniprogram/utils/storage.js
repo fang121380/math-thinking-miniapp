@@ -30,6 +30,32 @@ function normalizeKnowledgeState(value) {
 }
 
 const journeyAbilityKeys = ['calculation', 'problem', 'geometry', 'pattern'];
+const abilityKeys = [...journeyAbilityKeys, 'data'];
+
+function normalizeNonNegativeInteger(value, fallback = 0, maximum = Number.MAX_SAFE_INTEGER) {
+  const candidate = Number(value);
+  return Number.isInteger(candidate) && candidate >= 0
+    ? Math.min(candidate, maximum)
+    : fallback;
+}
+
+function normalizeAbilities(value) {
+  const source = isProgress(value) ? value : {};
+  const defaults = defaultProgress().abilities;
+  const keys = source.data === undefined ? journeyAbilityKeys : abilityKeys;
+  return keys.reduce((result, key) => {
+    const candidate = Number(source[key]);
+    result[key] = Number.isFinite(candidate)
+      ? Math.max(0, Math.min(100, Math.round(candidate)))
+      : (defaults[key] ?? 0);
+    return result;
+  }, {});
+}
+
+function normalizeWeakAbilities(value) {
+  if (!Array.isArray(value)) return [];
+  return [...new Set(value.filter((item) => abilityKeys.includes(item)))];
+}
 
 function normalizeDailyMissionMode(value) {
   return value === 'review' || value === 'challenge' ? value : '';
@@ -132,6 +158,11 @@ function isProgress(value) {
   return value && typeof value === 'object' && !Array.isArray(value);
 }
 
+function normalizeStringList(value, limit = 500) {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item) => typeof item === 'string' && item).slice(-limit);
+}
+
 function wxAdapter() {
   return {
     get() {
@@ -153,24 +184,33 @@ function createProgressStore(adapter = wxAdapter(), createLearnerId = () => `lea
       ...defaultProgress(),
       ...stored,
       ...learningSettings,
-      abilities: { ...defaultProgress().abilities, ...(stored.abilities || {}) },
-      mistakes: Array.isArray(stored.mistakes) ? stored.mistakes : [],
-      completedIds: Array.isArray(stored.completedIds) ? stored.completedIds : [],
-      servedQuestionIds: Array.isArray(stored.servedQuestionIds) ? stored.servedQuestionIds.slice(-500) : [],
+      abilities: normalizeAbilities(stored.abilities),
+      weakAbilities: normalizeWeakAbilities(stored.weakAbilities),
+      weakKnowledgePoints: normalizeStringList(stored.weakKnowledgePoints, 8),
+      skillState: isProgress(stored.skillState) ? stored.skillState : {},
+      mistakes: Array.isArray(stored.mistakes) ? stored.mistakes.filter((item) => item && typeof item === 'object' && !Array.isArray(item)) : [],
+      completedIds: normalizeStringList(stored.completedIds, 10000),
+      servedQuestionIds: normalizeStringList(stored.servedQuestionIds),
       servedQuestionSignatures: normalizeContentSignatures(stored.servedQuestionSignatures),
-      dailyQuestionIds: Array.isArray(stored.dailyQuestionIds) ? stored.dailyQuestionIds : [],
+      dailyQuestionIds: normalizeStringList(stored.dailyQuestionIds),
       completionDates: Array.isArray(stored.completionDates)
         ? [...new Set(stored.completionDates.filter((item) => /^\d{4}-\d{2}-\d{2}$/.test(item)))].sort()
         : [],
       dailySetNonce: Number.isInteger(stored.dailySetNonce) && stored.dailySetNonce >= 0 ? stored.dailySetNonce : 0,
       dailyMissionMode: normalizeDailyMissionMode(stored.dailyMissionMode),
       recoveryState: normalizeRecoveryState(stored.recoveryState),
-      selfPracticeQuestionIds: Array.isArray(stored.selfPracticeQuestionIds) ? stored.selfPracticeQuestionIds : [],
+      selfPracticeQuestionIds: normalizeStringList(stored.selfPracticeQuestionIds),
       selfPracticeIndex: Number.isInteger(stored.selfPracticeIndex) ? stored.selfPracticeIndex : 0,
       selfPracticeMode: stored.selfPracticeMode === 'review' ? 'review' : 'new',
       selfPracticeFilters: isProgress(stored.selfPracticeFilters) ? stored.selfPracticeFilters : {},
-      diagnosticQuestionIds: Array.isArray(stored.diagnosticQuestionIds) ? stored.diagnosticQuestionIds : [],
+      diagnosticQuestionIds: normalizeStringList(stored.diagnosticQuestionIds),
       diagnosticResponses: Array.isArray(stored.diagnosticResponses) ? stored.diagnosticResponses : [],
+      diagnosticAttempt: normalizeNonNegativeInteger(stored.diagnosticAttempt),
+      diagnosticCurrentIndex: normalizeNonNegativeInteger(stored.diagnosticCurrentIndex),
+      level: normalizeNonNegativeInteger(stored.level, 1, 4) || 1,
+      dailyCompleted: normalizeNonNegativeInteger(stored.dailyCompleted),
+      streakDays: normalizeNonNegativeInteger(stored.streakDays),
+      stars: normalizeNonNegativeInteger(stored.stars),
       knowledgeState: normalizeKnowledgeState(stored.knowledgeState),
       gameProgress: normalizeGameProgress(stored.gameProgress),
       gameJourneyCounts: normalizeGameJourneyCounts(stored.gameJourneyCounts),
@@ -188,6 +228,23 @@ function createProgressStore(adapter = wxAdapter(), createLearnerId = () => `lea
       ...defaultProgress(),
       ...next,
       ...normalizeLearningSettings(next),
+      abilities: normalizeAbilities(next.abilities),
+      weakAbilities: normalizeWeakAbilities(next.weakAbilities),
+      weakKnowledgePoints: normalizeStringList(next.weakKnowledgePoints, 8),
+      skillState: isProgress(next.skillState) ? next.skillState : {},
+      mistakes: Array.isArray(next.mistakes) ? next.mistakes.filter((item) => item && typeof item === 'object' && !Array.isArray(item)) : [],
+      completedIds: normalizeStringList(next.completedIds, 10000),
+      servedQuestionIds: normalizeStringList(next.servedQuestionIds),
+      dailyQuestionIds: normalizeStringList(next.dailyQuestionIds),
+      selfPracticeQuestionIds: normalizeStringList(next.selfPracticeQuestionIds),
+      diagnosticQuestionIds: normalizeStringList(next.diagnosticQuestionIds),
+      diagnosticResponses: Array.isArray(next.diagnosticResponses) ? next.diagnosticResponses : [],
+      diagnosticAttempt: normalizeNonNegativeInteger(next.diagnosticAttempt),
+      diagnosticCurrentIndex: normalizeNonNegativeInteger(next.diagnosticCurrentIndex),
+      level: normalizeNonNegativeInteger(next.level, 1, 4) || 1,
+      dailyCompleted: normalizeNonNegativeInteger(next.dailyCompleted),
+      streakDays: normalizeNonNegativeInteger(next.streakDays),
+      stars: normalizeNonNegativeInteger(next.stars),
       dailySetNonce: Number.isInteger(next.dailySetNonce) && next.dailySetNonce >= 0 ? next.dailySetNonce : 0,
       servedQuestionSignatures: normalizeContentSignatures(next.servedQuestionSignatures),
       dailyMissionMode: normalizeDailyMissionMode(next.dailyMissionMode),

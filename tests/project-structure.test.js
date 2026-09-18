@@ -293,6 +293,7 @@ test('mine page exposes validated local progress backup and restore actions', ()
   assert.match(pageJs, /wx\.setClipboardData/);
   assert.match(pageJs, /wx\.getClipboardData/);
   assert.match(pageJs, /当前学习记录会替换/);
+  assert.match(pageJs, /this\.soundEnabled = progress\.soundEnabled/);
   assert.match(wxml, /bindtap="exportProgress"/);
   assert.match(wxml, /bindtap="importProgress"/);
 });
