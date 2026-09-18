@@ -2,7 +2,13 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const { diagnosticQuestions, practiceQuestions, buildReviewSamples } = require('../miniprogram/utils/question-bank');
-const { decideContentUpdate } = require('../miniprogram/utils/content-update');
+const {
+  decideContentUpdate,
+  createContentPack,
+  validateContentPack,
+  selectContentPack,
+  createContentPackStore,
+} = require('../miniprogram/utils/content-update');
 
 test('every published question records original-pattern provenance and review status', () => {
   [...diagnosticQuestions, ...practiceQuestions].forEach((question) => {
@@ -33,6 +39,55 @@ test('content update protocol uses only a newer compatible manifest and otherwis
   });
   assert.equal(decideContentUpdate(bundled, { version: '2026.07.22.1', minimumAppVersion: '1.0.0', contentUrl: 'https://example.invalid/bank.json' }, '1.0.0').action, 'bundled');
   assert.equal(decideContentUpdate(bundled, { version: '2026.07.22.3', minimumAppVersion: '9.0.0', contentUrl: 'https://example.invalid/bank.json' }, '1.0.0').action, 'bundled');
+});
+
+test('content packs require a newer compatible manifest, unique prompts, and an intact checksum', () => {
+  const bundled = { version: '2026.09.17.1', minimumAppVersion: '1.0.0' };
+  const manifest = { version: '2026.09.18.1', minimumAppVersion: '1.0.0' };
+  const pack = createContentPack(manifest, [
+    { id: 'remote-1', prompt: '计算 2+2。' },
+    { id: 'remote-2', prompt: '计算 3+3。' },
+  ]);
+
+  assert.equal(validateContentPack(pack, bundled, '1.0.0').ok, true);
+  assert.equal(validateContentPack({ ...pack, questions: [{ id: 'same', prompt: '甲' }, { id: 'same', prompt: '乙' }] }, bundled, '1.0.0').error, 'checksum_mismatch');
+  const duplicatePrompt = createContentPack(manifest, [{ id: 'a', prompt: '相同题面' }, { id: 'b', prompt: '相同题面' }]);
+  assert.equal(validateContentPack(duplicatePrompt, bundled, '1.0.0').error, 'invalid_questions');
+  const tampered = { ...pack, checksum: pack.checksum, questions: pack.questions.map((question) => ({ ...question, prompt: `${question.prompt}改` })) };
+  assert.equal(validateContentPack(tampered, bundled, '1.0.0').error, 'checksum_mismatch');
+  assert.equal(validateContentPack(pack, bundled, '0.9.0').error, 'incompatible_app');
+});
+
+test('content selection prefers a valid candidate and falls back through cache to bundled content', () => {
+  const bundled = { version: '2026.09.17.1', minimumAppVersion: '1.0.0' };
+  const cached = createContentPack({ version: '2026.09.18.1', minimumAppVersion: '1.0.0' }, [{ id: 'cached', prompt: '缓存题' }]);
+  const candidate = createContentPack({ version: '2026.09.19.1', minimumAppVersion: '1.0.0' }, [{ id: 'candidate', prompt: '候选题' }]);
+  assert.equal(selectContentPack({ bundledManifest: bundled, candidate, cached }).source, 'candidate');
+  const invalidCandidate = { ...candidate, checksum: '00000000' };
+  const fallback = selectContentPack({ bundledManifest: bundled, candidate: invalidCandidate, cached });
+  assert.equal(fallback.source, 'cached');
+  assert.equal(selectContentPack({ bundledManifest: bundled, candidate: invalidCandidate }).source, 'bundled');
+});
+
+test('content pack installation writes active and previous versions atomically and rejects invalid packs', () => {
+  const bundled = { version: '2026.09.17.1', minimumAppVersion: '1.0.0' };
+  let stored;
+  const adapter = {
+    get() { return stored; },
+    set(key, value) { assert.equal(key, 'mathThinkingContentPackV1'); stored = value; },
+  };
+  const store = createContentPackStore({ adapter, bundledManifest: bundled });
+  const first = createContentPack({ version: '2026.09.18.1', minimumAppVersion: '1.0.0' }, [{ id: 'one', prompt: '一' }]);
+  const second = createContentPack({ version: '2026.09.19.1', minimumAppVersion: '1.0.0' }, [{ id: 'two', prompt: '二' }]);
+
+  assert.equal(store.install(first).installed, true);
+  assert.equal(store.install(second).installed, true);
+  assert.equal(stored.active.version, '2026.09.19.1');
+  assert.equal(stored.previous.version, '2026.09.18.1');
+  assert.equal(store.load().source, 'candidate');
+  const before = JSON.stringify(stored);
+  assert.equal(store.install({ ...second, checksum: 'bad' }).installed, false);
+  assert.equal(JSON.stringify(stored), before);
 });
 
 function assertSolvableReverseEquation(item) {
