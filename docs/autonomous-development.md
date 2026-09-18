@@ -46,4 +46,5 @@
 - 已完成内容更新协议批次：新增版本化题包、稳定校验、兼容性/唯一题面校验，以及 active/previous 原子安装和内置题库回退接口；未接入不存在的线上端点。
 - 本批验证：`npm run prepare:upload` 通过，题库审计 21,261 道题无错误，Node 测试 440 项通过。
 - GitHub 同步：远程 `main` 保留原上游历史；已正常推送 `codex/development-foundation`，远程提交为 `10ab36d`。GitHub Actions Verify 运行 `35298840453` 通过（`prepare:upload` 全量通过）；仅有 runner 的 Node.js 20 动作弃用提示。
+- 已检查微信开发者工具 CLI：工具已安装，但 `cli islogin` 返回“IDE service port disabled”；需要在开发者工具设置 → 安全设置开启服务端口后才能进行命令行编译/预览。当前不宣称模拟器或真机已验收。
 - 接下来推进微信开发者工具编译和真机验证；完整教材覆盖、教师审核、学生试用、实际云服务和真机验收仍未完成。
