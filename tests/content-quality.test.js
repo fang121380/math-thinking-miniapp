@@ -40,6 +40,24 @@ test('grade-four thinking review queue lists every representative item as pendin
   assert.match(report, /不代表教师或教研人员已经审核/);
 });
 
+test('grade-three and grade-five concept practice gives concrete hints and explanations', () => {
+  const ids = [
+    'p-g3-fraction_compare-5', 'p-g3-fraction_compare-6',
+    'p-g3-mass_convert-5', 'p-g3-mass_convert-6',
+    'p-g5-factor_multiple-5', 'p-g5-factor_multiple-6',
+    'p-g5-fraction_add-5', 'p-g5-fraction_add-6',
+    'p-g5-unit_conversion_g5-5', 'p-g5-unit_conversion_g5-6',
+  ];
+  const byId = new Map(practiceQuestions.map((question) => [question.id, question]));
+  const rows = ids.map((id) => byId.get(id));
+  rows.forEach((question) => {
+    assert.ok(question, 'representative concept question should exist');
+    assert.doesNotMatch(question.hint, /想一想“.*”的定义/, question.id);
+    assert.ok(question.solution.steps.length >= 2, question.id);
+    assert.doesNotMatch(question.solution.steps.join(' '), /根据 .* 的规则判断/, question.id);
+  });
+});
+
 test('content update protocol uses only a newer compatible manifest and otherwise keeps the bundled bank', () => {
   const bundled = { version: '2026.07.22.1', minimumAppVersion: '1.0.0', contentUrl: '' };
   assert.deepEqual(decideContentUpdate(bundled, { version: '2026.07.22.2', minimumAppVersion: '1.0.0', contentUrl: 'https://example.invalid/bank.json' }, '1.0.0'), {

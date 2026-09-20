@@ -1,12 +1,12 @@
 module.exports = {
-  version: '2026.09.20.1',
+  version: '2026.09.20.2',
   updatedAt: '2026-09-20',
   minimumAppVersion: '1.0.0',
   updateEndpoint: '',
   releaseNote: {
-    version: '2026.09.20.1',
+    version: '2026.09.20.2',
     title: '四年级题库已校正',
-    copy: '修正乘法估算答案，改进逆向推理、错误分析和验算题，并加强答案自动检查。',
+    copy: '修正乘法估算答案，改进基础题提示和解析，并加强答案自动检查。',
   },
   edition: { id: 'multi', label: '八版本教材' },
   enabledGrades: [1, 2, 3, 4, 5, 6, 7, 8, 9],
