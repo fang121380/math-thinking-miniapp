@@ -76,6 +76,23 @@ test('lower-primary concept practice explains an observable action instead of a 
   });
 });
 
+test('grade-six concept practice gives executable fraction, circle, and negative-number steps', () => {
+  const ids = [
+    'p-g6-fraction_multiply-5', 'p-g6-fraction_multiply-6',
+    'p-g6-fraction_divide-5', 'p-g6-fraction_divide-6',
+    'p-g6-circle-5', 'p-g6-circle-6',
+    'p-g6-negative_number-5', 'p-g6-negative_number-6',
+  ];
+  const byId = new Map(practiceQuestions.map((question) => [question.id, question]));
+  ids.forEach((id) => {
+    const question = byId.get(id);
+    assert.ok(question, id);
+    assert.doesNotMatch(question.hint, /想一想“.*”的定义/, id);
+    assert.ok(question.solution.steps.length >= 2, id);
+    assert.doesNotMatch(question.solution.steps.join(' '), /根据 .* 的规则判断/, id);
+  });
+});
+
 test('content update protocol uses only a newer compatible manifest and otherwise keeps the bundled bank', () => {
   const bundled = { version: '2026.07.22.1', minimumAppVersion: '1.0.0', contentUrl: '' };
   assert.deepEqual(decideContentUpdate(bundled, { version: '2026.07.22.2', minimumAppVersion: '1.0.0', contentUrl: 'https://example.invalid/bank.json' }, '1.0.0'), {

@@ -1,10 +1,10 @@
 module.exports = {
-  version: '2026.09.20.3',
+  version: '2026.09.20.4',
   updatedAt: '2026-09-20',
   minimumAppVersion: '1.0.0',
   updateEndpoint: '',
   releaseNote: {
-    version: '2026.09.20.3',
+    version: '2026.09.20.4',
     title: '四年级题库已校正',
     copy: '修正乘法估算答案，改进基础题提示和解析，并加强答案自动检查。',
   },
