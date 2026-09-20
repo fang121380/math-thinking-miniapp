@@ -514,7 +514,7 @@ Page({
       this.finishRound();
       return;
     }
-    if (challenge.mode === 'choice') {
+    if (this.data.mode === 'choice') {
       if (this.data.selectedAnswer === null) {
         this.showFeedback('pattern_unselected');
         return;

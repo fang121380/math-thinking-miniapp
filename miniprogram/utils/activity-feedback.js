@@ -5,7 +5,7 @@ const MESSAGES = {
   hint_unavailable: '暂时算不出提示，请重来一局',
   invalid_puzzle_move: '只能移动空格旁边的数字',
   pattern_unselected: '先选一个答案，再检查',
-  pattern_wrong: '再观察一下相邻数字的变化',
+  pattern_wrong: '这个答案还不对，点“提示”看数字怎样分组。',
   selected_disconnected: '选中的格子要连在一起',
   remaining_disconnected: '没选的格子也要连在一起',
   audio_failed: '音效暂时不可用，不影响答题',

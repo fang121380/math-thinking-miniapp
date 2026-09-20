@@ -59,7 +59,7 @@
           <view class="sequence-cell missing">?</view>
         </view>
         <view class="choice-grid">
-          <button wx:for="{{choices}}" wx:key="item" class="choice-button {{selectedAnswer === item ? 'selected' : ''}}" data-value="{{item}}" bindtap="selectPattern">{{item}}</button>
+          <button wx:for="{{choices}}" wx:key="item" class="choice-button {{selectedAnswer === item ? (complete ? 'correct' : 'selected') : ''}}" data-value="{{item}}" bindtap="selectPattern">{{item}}</button>
         </view>
       </view>
 

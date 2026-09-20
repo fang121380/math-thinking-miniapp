@@ -140,3 +140,54 @@ test('a generated repeat is explicitly presented as a review round', () => {
     runtime.cleanup();
   }
 });
+
+test('a visible choice round checks its selected answer even when legacy data omitted the mode', () => {
+  const runtime = loadGamePage();
+  try {
+    let completed = false;
+    const context = {
+      data: { ...runtime.page.data, loading: false, complete: false, mode: 'choice', selectedAnswer: 42 },
+      type: 'pattern',
+      round: {
+        challenge: { type: 'pattern', answer: 42 },
+        player: { selectedAnswer: 42 },
+      },
+      finishRound() { completed = true; },
+      playSound() {},
+      showFeedback() {},
+    };
+
+    runtime.page.checkAnswer.call(context);
+
+    assert.equal(completed, true);
+  } finally {
+    runtime.cleanup();
+  }
+});
+
+test('interleaved pattern hint names both visible groups and their steps', () => {
+  const runtime = loadGamePage();
+  try {
+    const context = {
+      data: { ...runtime.page.data, loading: false, complete: false },
+      round: {
+        challenge: {
+          type: 'pattern',
+          mode: 'choice',
+          explanation: '第1、3、5个数是 18、30、42，每次加 12；第2、4个数是 34、44，每次加 10。',
+        },
+        player: { selectedAnswer: null },
+      },
+      type: 'pattern',
+      playSound() {},
+      setData(patch) { Object.assign(this.data, patch); },
+    };
+
+    runtime.page.hint.call(context);
+
+    assert.match(context.data.feedbackText, /第1、3、5个数是 18、30、42/);
+    assert.match(context.data.feedbackText, /第2、4个数是 34、44/);
+  } finally {
+    runtime.cleanup();
+  }
+});

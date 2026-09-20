@@ -406,6 +406,13 @@ test('game choice buttons center their labels vertically', () => {
   assert.match(gameCss, /\.choice-button\s*\{[^}]*min-height:\s*86rpx;/s);
 });
 
+test('a completed choice round marks the correct selection as successful', () => {
+  const wxml = fs.readFileSync(path.join(miniprogram, 'pages/game/game.wxml'), 'utf8');
+  const wxss = fs.readFileSync(path.join(miniprogram, 'pages/game/game.wxss'), 'utf8');
+  assert.match(wxml, /complete \? 'correct' : 'selected'/);
+  assert.match(wxss, /\.choice-button\.correct[^}]+#edf7e8/);
+});
+
 test('sound settings, local reminder, and bundled audio are wired to real behavior', () => {
   const mineJs = fs.readFileSync(path.join(miniprogram, 'pages/mine/mine.js'), 'utf8');
   const homeJs = fs.readFileSync(path.join(miniprogram, 'pages/home/home.js'), 'utf8');

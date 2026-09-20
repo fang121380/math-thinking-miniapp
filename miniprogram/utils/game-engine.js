@@ -312,13 +312,13 @@ function describePattern(template, values) {
     return `交替进行“加 ${firstDifference}、乘 ${values[2] / values[1]}”`;
   }
   if (template === 'interleaved') {
-    return `奇数位每次加 ${values[2] - values[0]}，偶数位每次加 ${values[3] - values[1]}`;
+    return `第1、3、5个数是 ${values[0]}、${values[2]}、${values[4]}，每次加 ${values[2] - values[0]}；第2、4个数是 ${values[1]}、${values[3]}，每次加 ${values[3] - values[1]}。`;
   }
   return '这些数是连续整数的平方';
 }
 
 function patternInstruction(template) {
-  if (template === 'interleaved') return '把奇数位和偶数位分开观察，再选择最符合规律的答案。';
+  if (template === 'interleaved') return '把第1、3、5个数放一组，第2、4个数放一组，再分别找规律。';
   if (template === 'alternating') return '观察相邻数字交替使用的两种运算，再选择答案。';
   return '先观察相邻数字，再选择最符合规律的答案。';
 }
@@ -341,7 +341,7 @@ function generatePattern({ difficulty = 'easy', grade, rng = Math.random, recent
     const answer = generated.values[4];
     const signature = `${generated.template}:${sequence.join(',')}:${answer}`;
     const challenge = {
-      type: 'pattern', difficulty, signature, sequence, answer,
+      type: 'pattern', mode: 'choice', difficulty, signature, sequence, answer,
       choices: patternChoices(answer, sequence, rng),
       explanation: describePattern(generated.template, generated.values),
       title: '找出下一个数',
@@ -1245,9 +1245,12 @@ function validateGameChallenge(challenge) {
     addAuditIssue(issues, choices.length === 4, 'choice_count_invalid');
     addAuditIssue(issues, new Set(choices.map(String)).size === choices.length, 'choice_duplicate');
     addAuditIssue(issues, choices.some((choice) => valuesMatch(choice, challenge.answer)), 'answer_not_in_choices');
+    if (type === 'pattern') {
+      addAuditIssue(issues, challenge.mode === 'choice', 'pattern_mode_invalid');
+    }
     if (type === 'pattern' && String(challenge.signature).startsWith('interleaved:')) {
-      addAuditIssue(issues, /奇数位和偶数位分开/.test(challenge.instruction), 'pattern_instruction_ambiguous');
-      addAuditIssue(issues, /奇数位每次加.+偶数位每次加/.test(challenge.explanation), 'pattern_explanation_ambiguous');
+      addAuditIssue(issues, /第1、3、5个数.+第2、4个数/.test(challenge.instruction), 'pattern_instruction_ambiguous');
+      addAuditIssue(issues, /第1、3、5个数是.+第2、4个数是/.test(challenge.explanation), 'pattern_explanation_ambiguous');
     }
   }
 

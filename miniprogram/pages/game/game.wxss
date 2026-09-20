@@ -96,7 +96,8 @@
   font-weight: 800;
 }
 
-.choice-button.selected { border-color: #df6a51; background: #fff1ed; color: #9e4939; }
+.choice-button.selected { border-color: #d8a63e; background: #fff8dc; color: #695117; }
+.choice-button.correct { border-color: #7ea84e; background: #edf7e8; color: #4f7020; }
 
 .partition-grid {
   display: grid;

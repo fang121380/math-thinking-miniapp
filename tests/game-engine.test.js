@@ -126,9 +126,11 @@ test('grade-four interleaved pattern keeps the visible odd-even rule after scali
 
   assert.deepEqual(challenge.sequence, [22, 26, 36, 46]);
   assert.equal(challenge.answer, 50);
+  assert.equal(challenge.mode, 'choice');
   assert.ok(challenge.choices.includes(50));
-  assert.match(challenge.instruction, /奇数位和偶数位分开/);
-  assert.match(challenge.explanation, /奇数位每次加 14，偶数位每次加 20/);
+  assert.match(challenge.instruction, /第1、3、5个数.+第2、4个数/);
+  assert.match(challenge.explanation, /第1、3、5个数是 22、36、50，每次加 14/);
+  assert.match(challenge.explanation, /第2、4个数是 26、46，每次加 20/);
 });
 
 test('saved interleaved patterns with a generic adjacent-number hint are rejected', () => {
@@ -147,6 +149,19 @@ test('saved interleaved patterns with a generic adjacent-number hint are rejecte
   assert.deepEqual(validateGameChallenge(legacy), {
     valid: false,
     issues: ['pattern_instruction_ambiguous', 'pattern_explanation_ambiguous'],
+  });
+});
+
+test('saved pattern rounds without an explicit choice mode are rejected', () => {
+  const challenge = generatePattern({
+    difficulty: 'hard',
+    grade: 4,
+    rng: createSeededRandom('s14037'),
+  });
+
+  assert.deepEqual(validateGameChallenge({ ...challenge, mode: undefined }), {
+    valid: false,
+    issues: ['pattern_mode_invalid'],
   });
 });
 
