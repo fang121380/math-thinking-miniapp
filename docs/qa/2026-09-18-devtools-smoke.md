@@ -33,3 +33,23 @@
 - 教师审核、学生试用、全学年教材校准、实际云同步及线上题包发布。
 
 后续先检查最新 Git 日志与本记录，只补未覆盖场景；不重复服务端口排障，不将模拟器通过写成真机通过。GitHub 同步与 CI 的最新状态以本次文档提交及对应 Actions 运行为准。
+
+## iOS 真机调试工具链修复（2026-09-20）
+
+开发者工具顶部“真机调试”按钮曾在点击后没有可见反馈。日志显示按钮已经触发 `game-ios-debug`，但内置 `ios_webkit_debug_proxy` 启动约 0.2 秒后以 `adapter.spawnProcess.close, code=null` 退出。直接运行该二进制确认根因是缺少以下绝对路径动态库，而不是小程序代码或按钮事件失效：
+
+- `/opt/homebrew/opt/libimobiledevice/lib/libimobiledevice-1.0.6.dylib`
+- `/opt/homebrew/opt/libplist/lib/libplist-2.0.4.dylib`
+- `/opt/homebrew/opt/libusbmuxd/lib/libusbmuxd-2.0.7.dylib`
+- `/opt/homebrew/opt/openssl@3/lib/libssl.3.dylib`
+- `/opt/homebrew/opt/openssl@3/lib/libcrypto.3.dylib`
+
+本机原有 `/opt/homebrew` 是未完成的空仓库。恢复 Homebrew 后安装 `libimobiledevice` 及依赖，实际安装出的动态库名称与开发者工具要求完全一致。随后用开发者工具原参数启动代理：
+
+```text
+ios_webkit_debug_proxy --no-frontend --config=null:29374,:29375-29475
+```
+
+代理成功输出 `Listing devices on :29374`，并持续监听 TCP `29374`，不再秒退。重启项目时另发现 macOS 的 HTTP/HTTPS 代理虽已关闭，网络服务仍残留已退出的 `127.0.0.1:7892` 地址，开发者工具错误地继续使用该地址；清空失效地址并保持代理关闭后，CLI `open` 成功，模拟器日志出现 `simulator launch success` 和 `webview page ready`。
+
+当前 `idevice_id -l` 与 USB 枚举均未发现 iPhone，因此这里只能确认按钮依赖和 iOS 调试代理已修复，不能记录为真机连接通过。下次验收需用数据线连接并解锁 iPhone、在手机上信任此 Mac；若代理要求 WebKit 检查，再开启“设置 > Safari > 高级 > 网页检查器”，然后点击“真机调试”完成设备侧确认。
