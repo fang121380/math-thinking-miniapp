@@ -5,7 +5,7 @@ const path = require('node:path');
 
 const { BGM_TRACKS, createBackgroundMusic } = require('../miniprogram/utils/background-music');
 
-test('background playlist contains ten compact classical tracks with tracked licenses', () => {
+test('background playlist streams ten classical tracks from the configured media host', () => {
   assert.deepEqual(BGM_TRACKS.map((item) => item.id), [
     'fur-elise',
     'turkish-march',
@@ -18,15 +18,20 @@ test('background playlist contains ten compact classical tracks with tracked lic
     'beethoven-pathetique',
     'mozart-sonata-14',
   ]);
-  assert.ok(BGM_TRACKS.every((item) => item.source.startsWith('/assets/audio/bgm/') && item.source.endsWith('.mp3')));
+  assert.ok(BGM_TRACKS.every((item) => {
+    const source = new URL(item.source);
+    return source.protocol === 'https:'
+      && source.hostname === 'upload.wikimedia.org'
+      && source.pathname.endsWith('.mp3');
+  }));
   assert.ok(BGM_TRACKS.every((item) => !item.subpackage && !item.root));
-  assert.deepEqual(BGM_TRACKS.slice(3).map((item) => item.license), ['PDM', 'CC0', 'CC0', 'CC0', 'CC0', 'CC0', 'CC0']);
+  assert.deepEqual(BGM_TRACKS.map((item) => item.license), ['CC0', 'PDM', 'PDM', 'PDM', 'CC0', 'CC0', 'CC0', 'CC0', 'CC0', 'CC0']);
 });
 
-test('background music starts a selected main-package track without a subpackage gate', () => {
+test('background music starts a selected remote track without a subpackage gate', () => {
   const calls = [];
   const music = createBackgroundMusic({
-    loadSubPackage() { throw new Error('main-package audio must not load a subpackage'); },
+    loadSubPackage() { throw new Error('remote audio must not load a subpackage'); },
     createContext: () => ({
       set src(value) { calls.push(['src', value]); }, set loop(value) {}, set volume(value) {}, play() { calls.push(['play']); },
     }),

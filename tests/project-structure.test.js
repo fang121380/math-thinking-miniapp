@@ -503,10 +503,10 @@ test('mine page exposes a separately persisted background music switch', () => {
   assert.match(mineWxml, /bindtap="switchBgmTrack"/);
   const { BGM_TRACKS } = require('../miniprogram/utils/background-music');
   assert.equal(BGM_TRACKS.length, 10);
-  BGM_TRACKS.forEach((track) => assert.match(track.source, /^\/assets\/audio\/bgm\/[^/]+\.mp3$/));
+  BGM_TRACKS.forEach((track) => assert.match(track.source, /^https:\/\/upload\.wikimedia\.org\/.*\.mp3$/));
 });
 
-test('main package and bundled media stay inside true-device limits', () => {
+test('compiled package inputs stay inside WeChat quality limits', () => {
   const listFiles = (directory) => fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const target = path.join(directory, entry.name);
     return entry.isDirectory() ? listFiles(target) : [target];
@@ -515,12 +515,12 @@ test('main package and bundled media stay inside true-device limits', () => {
   const subpackageRoots = (config.subpackages || []).map((item) => path.join(miniprogram, item.root));
   const files = listFiles(miniprogram).filter((file) => !subpackageRoots.some((root) => file.startsWith(`${root}${path.sep}`)));
   const totalBytes = files.reduce((sum, file) => sum + fs.statSync(file).size, 0);
-  const mediaBytes = files
-    .filter((file) => /\.(png|jpe?g|gif|webp|wav|mp3|aac|m4a)$/i.test(file))
+  const mediaBytes = listFiles(miniprogram)
+    .filter((file) => /\.(jpg|jpeg|png|svg|webp|gif|flac|m4a|ogg|ape|amr|wma|wav|mp3|mp4|aac|aiff|caf)$/i.test(file))
     .reduce((sum, file) => sum + fs.statSync(file).size, 0);
 
-  assert.ok(totalBytes < 1.75 * 1024 * 1024, `main package is ${totalBytes} bytes`);
-  assert.ok(mediaBytes < 1.3 * 1024 * 1024, `main package media is ${mediaBytes} bytes`);
+  assert.ok(totalBytes < 1.5 * 1024 * 1024, `main package is ${totalBytes} bytes`);
+  assert.ok(mediaBytes < 200 * 1024, `compiled package media is ${mediaBytes} bytes`);
 });
 
 test('junior-only mission generation stays in the junior subpackage', () => {
@@ -530,27 +530,11 @@ test('junior-only mission generation stays in the junior subpackage', () => {
   assert.match(missionPage, /require\('\.\.\/mission-engine'\)/);
 });
 
-test('licensed compact BGM files live in the main package for true-device playback', () => {
+test('optional BGM does not add audio files to the compiled package', () => {
   const config = JSON.parse(fs.readFileSync(path.join(miniprogram, 'app.json'), 'utf8'));
   assert.equal((config.subpackages || []).some((item) => item.root.startsWith('music/')), false);
   const musicDirectory = path.join(miniprogram, 'assets/audio/bgm');
-  const files = fs.readdirSync(musicDirectory).filter((file) => file.endsWith('.mp3'));
-  assert.deepEqual(files.sort(), [
-    'bach-cello-prelude.mp3',
-    'bach-minuet.mp3',
-    'bach-prelude-c-major.mp3',
-    'beethoven-eroica-scherzo.mp3',
-    'beethoven-pathetique.mp3',
-    'fur-elise.mp3',
-    'mozart-sonata-14.mp3',
-    'ode-to-joy.mp3',
-    'tchaikovsky-piano-concerto.mp3',
-    'turkish-march.mp3',
-  ]);
-  files.forEach((file) => {
-    const music = path.join(musicDirectory, file);
-    assert.ok(fs.statSync(music).size < 180 * 1024, `${file} is too large for the main package`);
-  });
+  assert.equal(fs.existsSync(musicDirectory), false);
 });
 
 test('navigation and settings use dedicated feedback roles', () => {

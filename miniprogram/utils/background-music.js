@@ -1,14 +1,21 @@
+const WIKIMEDIA_TRANSCODE_ROOT = 'https://upload.wikimedia.org/wikipedia/commons/transcoded';
+
+function wikimediaMp3(hashPath, fileName) {
+  const encodedName = encodeURIComponent(fileName);
+  return `${WIKIMEDIA_TRANSCODE_ROOT}/${hashPath}/${encodedName}/${encodedName}.mp3`;
+}
+
 const BGM_TRACKS = [
-  { id: 'fur-elise', label: '致爱丽丝', source: '/assets/audio/bgm/fur-elise.mp3', license: 'Pixabay' },
-  { id: 'turkish-march', label: '土耳其进行曲', source: '/assets/audio/bgm/turkish-march.mp3', license: 'Pixabay' },
-  { id: 'bach-minuet', label: 'G大调小步舞曲', source: '/assets/audio/bgm/bach-minuet.mp3', license: 'Pixabay' },
-  { id: 'ode-to-joy', label: '欢乐颂', source: '/assets/audio/bgm/ode-to-joy.mp3', license: 'PDM' },
-  { id: 'bach-cello-prelude', label: '巴赫大提琴前奏曲', source: '/assets/audio/bgm/bach-cello-prelude.mp3', license: 'CC0' },
-  { id: 'bach-prelude-c-major', label: '巴赫 C 大调前奏曲', source: '/assets/audio/bgm/bach-prelude-c-major.mp3', license: 'CC0' },
-  { id: 'beethoven-eroica-scherzo', label: '英雄交响曲谐谑曲', source: '/assets/audio/bgm/beethoven-eroica-scherzo.mp3', license: 'CC0' },
-  { id: 'tchaikovsky-piano-concerto', label: '柴可夫斯基第一钢琴协奏曲', source: '/assets/audio/bgm/tchaikovsky-piano-concerto.mp3', license: 'CC0' },
-  { id: 'beethoven-pathetique', label: '悲怆奏鸣曲慢板', source: '/assets/audio/bgm/beethoven-pathetique.mp3', license: 'CC0' },
-  { id: 'mozart-sonata-14', label: '莫扎特第十四钢琴奏鸣曲', source: '/assets/audio/bgm/mozart-sonata-14.mp3', license: 'CC0' },
+  { id: 'fur-elise', label: '致爱丽丝', source: wikimediaMp3('7/7b', 'FurElise.ogg'), license: 'CC0' },
+  { id: 'turkish-march', label: '土耳其进行曲', source: wikimediaMp3('4/4e', 'Mozart-Marsz_turecki-(Romuald_Greiss).ogg'), license: 'PDM' },
+  { id: 'bach-minuet', label: 'G大调小步舞曲', source: wikimediaMp3('2/25', 'Minuet_in_G_major,_Anh._114_-_Notebook_for_Anna_Magdalena_Bach.ogg'), license: 'PDM' },
+  { id: 'ode-to-joy', label: '欢乐颂', source: wikimediaMp3('f/f7', 'Ode_to_Joy.ogg'), license: 'PDM' },
+  { id: 'bach-cello-prelude', label: '巴赫大提琴前奏曲', source: wikimediaMp3('a/a7', 'Bach_Cello_Suite_1_Prelude_(BWV_1007)_Played_by_Chris.ogg'), license: 'CC0' },
+  { id: 'bach-prelude-c-major', label: '巴赫 C 大调前奏曲', source: wikimediaMp3('b/b6', 'Kimiko_Ishizaka_-_Bach_-_Well-Tempered_Clavier,_Book_1_-_01_Prelude_No._1_in_C_major,_BWV_846.ogg'), license: 'CC0' },
+  { id: 'beethoven-eroica-scherzo', label: '英雄交响曲谐谑曲', source: wikimediaMp3('0/07', 'Beethoven_SymphonyNo.3Eroica_LudwigVanBeethoven-SymphonyNo.3InEFlatMajorEroicaOp.55-03-ScherzoAllegroVivace.ogg'), license: 'CC0' },
+  { id: 'tchaikovsky-piano-concerto', label: '柴可夫斯基第一钢琴协奏曲', source: wikimediaMp3('4/48', 'Tchaikovsky,_Concerto_No.1_in_B-flat_minor_Op.23,_I._Allegro.ogg'), license: 'CC0' },
+  { id: 'beethoven-pathetique', label: '悲怆奏鸣曲慢板', source: wikimediaMp3('6/63', 'Beethoven,_Sonata_No._8_in_C_Minor_Pathetique,_Op._13_-_II._Adagio_cantabile.ogg'), license: 'CC0' },
+  { id: 'mozart-sonata-14', label: '莫扎特第十四钢琴奏鸣曲', source: wikimediaMp3('8/86', 'Mozart_-_Piano_Sonata_No._14.ogg'), license: 'CC0' },
 ];
 const BGM_SOURCE = BGM_TRACKS[0].source;
 const BASE_VOLUME = 0.12;
