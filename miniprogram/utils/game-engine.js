@@ -221,14 +221,14 @@ function arithmeticPattern(rng) {
   const start = randomInt(rng, 1, 40);
   const step = randomInt(rng, 2, 12);
   const values = Array.from({ length: 5 }, (_, index) => start + index * step);
-  return { template: 'arithmetic', values, explanation: `每次增加 ${step}` };
+  return { template: 'arithmetic', values };
 }
 
 function geometricPattern(rng) {
   const start = randomInt(rng, 1, 9);
   const ratio = randomInt(rng, 2, 3);
   const values = Array.from({ length: 5 }, (_, index) => start * (ratio ** index));
-  return { template: 'geometric', values, explanation: `每次乘 ${ratio}` };
+  return { template: 'geometric', values };
 }
 
 function increasingDifferencePattern(rng) {
@@ -241,7 +241,7 @@ function increasingDifferencePattern(rng) {
     values.push(values[values.length - 1] + difference);
     difference += increase;
   }
-  return { template: 'increasing-difference', values, explanation: `增加的数每次再多 ${increase}` };
+  return { template: 'increasing-difference', values };
 }
 
 function alternatingPattern(rng) {
@@ -255,7 +255,7 @@ function alternatingPattern(rng) {
       ? values[index - 1] + addition
       : values[index - 1] * multiplier);
   }
-  return { template: 'alternating', values, explanation: `交替进行“加 ${addition}、乘 ${multiplier}”` };
+  return { template: 'alternating', values };
 }
 
 function interleavedPattern(rng) {
@@ -264,13 +264,13 @@ function interleavedPattern(rng) {
   const oddStep = randomInt(rng, 2, 9);
   const evenStep = randomInt(rng, 3, 10);
   const values = [oddStart, evenStart, oddStart + oddStep, evenStart + evenStep, oddStart + oddStep * 2];
-  return { template: 'interleaved', values, explanation: `奇数位每次加 ${oddStep}，偶数位每次加 ${evenStep}` };
+  return { template: 'interleaved', values };
 }
 
 function squarePattern(rng) {
   const start = randomInt(rng, 1, 12);
   const values = Array.from({ length: 5 }, (_, index) => (start + index) ** 2);
-  return { template: 'squares', values, explanation: '这些数是连续整数的平方' };
+  return { template: 'squares', values };
 }
 
 const PATTERN_GENERATORS = {
@@ -300,21 +300,35 @@ function patternChoices(answer, sequence, rng) {
   return shuffle([answer, ...distractors], rng);
 }
 
+function describePattern(template, values) {
+  const firstDifference = values[1] - values[0];
+  if (template === 'arithmetic') return `每次增加 ${firstDifference}`;
+  if (template === 'geometric') return `每次乘 ${values[1] / values[0]}`;
+  if (template === 'increasing-difference') {
+    const increase = (values[2] - values[1]) - firstDifference;
+    return `增加的数依次是 ${firstDifference}、${firstDifference + increase}、${firstDifference + increase * 2}、${firstDifference + increase * 3}`;
+  }
+  if (template === 'alternating') {
+    return `交替进行“加 ${firstDifference}、乘 ${values[2] / values[1]}”`;
+  }
+  if (template === 'interleaved') {
+    return `奇数位每次加 ${values[2] - values[0]}，偶数位每次加 ${values[3] - values[1]}`;
+  }
+  return '这些数是连续整数的平方';
+}
+
+function patternInstruction(template) {
+  if (template === 'interleaved') return '把奇数位和偶数位分开观察，再选择最符合规律的答案。';
+  if (template === 'alternating') return '观察相邻数字交替使用的两种运算，再选择答案。';
+  return '先观察相邻数字，再选择最符合规律的答案。';
+}
+
 function adjustPatternForGrade(generated, grade) {
   if (primaryGrade(grade, 3) < 4) return generated;
-  if (generated.template === 'squares') {
-    const start = Math.sqrt(generated.values[0]) + 4;
-    return {
-      ...generated,
-      values: Array.from({ length: 5 }, (_, index) => (start + index) ** 2),
-      explanation: '这些数是更大的连续整数的平方。',
-    };
-  }
-  return {
-    ...generated,
-    values: generated.values.map((value) => value * 2),
-    explanation: '观察每一步的数字变化，再判断规律。',
-  };
+  const values = generated.template === 'squares'
+    ? Array.from({ length: 5 }, (_, index) => (Math.sqrt(generated.values[0]) + 4 + index) ** 2)
+    : generated.values.map((value) => value * 2);
+  return { ...generated, values };
 }
 
 function generatePattern({ difficulty = 'easy', grade, rng = Math.random, recentSignatures = [] } = {}) {
@@ -329,9 +343,9 @@ function generatePattern({ difficulty = 'easy', grade, rng = Math.random, recent
     const challenge = {
       type: 'pattern', difficulty, signature, sequence, answer,
       choices: patternChoices(answer, sequence, rng),
-      explanation: generated.explanation,
+      explanation: describePattern(generated.template, generated.values),
       title: '找出下一个数',
-      instruction: '先观察相邻数字，再选择最符合规律的答案。',
+      instruction: patternInstruction(generated.template),
     };
     fallback = challenge;
     if (!recent.has(signature)) return challenge;
@@ -582,7 +596,11 @@ function constructTokenLabelSets(challenge) {
 function constructTokensMatch(challenge, tokenIds) {
   const labels = labelsForTokenIds(challenge, tokenIds);
   const labelSets = constructTokenLabelSets(challenge);
-  if (!labels || !labelSets.some((expected) => sameTokenMultiset(labels, expected))) return false;
+  if (!labels || new Set(tokenIds).size !== tokenIds.length) return false;
+  const usesExpectedTokenCount = labels.length === (challenge.expectedTokenIds || []).length;
+  if (challenge.type !== 'target-number'
+    && !labelSets.some((expected) => sameTokenMultiset(labels, expected))) return false;
+  if (challenge.type === 'target-number' && !usesExpectedTokenCount) return false;
   if (challenge.type === 'logic-seats') {
     const expected = labelSets[0] || [];
     return labels.length === expected.length && labels.every((label, index) => label === expected[index]);
@@ -1227,6 +1245,10 @@ function validateGameChallenge(challenge) {
     addAuditIssue(issues, choices.length === 4, 'choice_count_invalid');
     addAuditIssue(issues, new Set(choices.map(String)).size === choices.length, 'choice_duplicate');
     addAuditIssue(issues, choices.some((choice) => valuesMatch(choice, challenge.answer)), 'answer_not_in_choices');
+    if (type === 'pattern' && String(challenge.signature).startsWith('interleaved:')) {
+      addAuditIssue(issues, /奇数位和偶数位分开/.test(challenge.instruction), 'pattern_instruction_ambiguous');
+      addAuditIssue(issues, /奇数位每次加.+偶数位每次加/.test(challenge.explanation), 'pattern_explanation_ambiguous');
+    }
   }
 
   const expectedAnswer = expectedAnswerForSignature(challenge);

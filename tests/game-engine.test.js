@@ -117,6 +117,39 @@ test('generated pattern rounds have one answer, unique choices, and broad variat
   assert.ok(signatures.size >= 300);
 });
 
+test('grade-four interleaved pattern keeps the visible odd-even rule after scaling', () => {
+  const challenge = generatePattern({
+    difficulty: 'hard',
+    grade: 4,
+    rng: createSeededRandom('s14037'),
+  });
+
+  assert.deepEqual(challenge.sequence, [22, 26, 36, 46]);
+  assert.equal(challenge.answer, 50);
+  assert.ok(challenge.choices.includes(50));
+  assert.match(challenge.instruction, /奇数位和偶数位分开/);
+  assert.match(challenge.explanation, /奇数位每次加 14，偶数位每次加 20/);
+});
+
+test('saved interleaved patterns with a generic adjacent-number hint are rejected', () => {
+  const challenge = generatePattern({
+    difficulty: 'hard',
+    grade: 4,
+    rng: createSeededRandom('s14037'),
+  });
+  const legacy = {
+    ...challenge,
+    instruction: '先观察相邻数字，再选择最符合规律的答案。',
+    explanation: '观察每一步的数字变化，再判断规律。',
+  };
+
+  assert.deepEqual(validateGameChallenge(challenge), { valid: true, issues: [] });
+  assert.deepEqual(validateGameChallenge(legacy), {
+    valid: false,
+    issues: ['pattern_instruction_ambiguous', 'pattern_explanation_ambiguous'],
+  });
+});
+
 test('recent pattern signatures are excluded with the same random stream', () => {
   const first = generatePattern({ difficulty: 'hard', rng: createSeededRandom('pattern-repeat'), recentSignatures: [] });
   const next = generatePattern({ difficulty: 'hard', rng: createSeededRandom('pattern-repeat'), recentSignatures: [first.signature] });
@@ -275,6 +308,38 @@ test('primary matching and build interactions never rely on hidden ids for a vis
   [swapped[duplicateIndexes[0]], swapped[duplicateIndexes[1]]] = [swapped[duplicateIndexes[1]], swapped[duplicateIndexes[0]]];
   assert.equal(constructTokensMatch(duplicateTokenRound, swapped), true);
   assert.equal(constructTokensMatch(duplicateTokenRound, [...expected].reverse()), false);
+});
+
+test('target-number accepts every complete equation made from distinct available tokens', () => {
+  const challenge = {
+    type: 'target-number',
+    answer: 35,
+    expectedTokenIds: ['n36', 'plus', 'n16', 'minus', 'n17', 'equals', 'answer'],
+    palette: [
+      { id: 'n36', label: '36' },
+      { id: 'plus', label: '+' },
+      { id: 'n16', label: '16' },
+      { id: 'minus', label: '-' },
+      { id: 'n17', label: '17' },
+      { id: 'equals', label: '=' },
+      { id: 'answer', label: '35' },
+      { id: 'n39', label: '39' },
+      { id: 'n20', label: '20' },
+    ],
+  };
+
+  assert.equal(
+    constructTokensMatch(challenge, ['n36', 'minus', 'n17', 'plus', 'n16', 'equals', 'answer']),
+    true,
+  );
+  assert.equal(
+    constructTokensMatch(challenge, ['n39', 'minus', 'n20', 'plus', 'n16', 'equals', 'answer']),
+    true,
+  );
+  assert.equal(
+    constructTokensMatch(challenge, ['n36', 'plus', 'n17', 'minus', 'n16', 'equals', 'answer']),
+    false,
+  );
 });
 
 test('shape hunt uses mutually exclusive primary-school clues', () => {
