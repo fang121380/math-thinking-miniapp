@@ -9,6 +9,7 @@ const {
   selectContentPack,
   createContentPackStore,
 } = require('../miniprogram/utils/content-update');
+const { renderGrade4ThinkingReviewReport } = require('../docs/tools/generate-grade4-thinking-review-report');
 
 test('every published question records original-pattern provenance and review status', () => {
   [...diagnosticQuestions, ...practiceQuestions].forEach((question) => {
@@ -30,6 +31,13 @@ test('review sampling is deterministic and covers every textbook-grade group', (
     assert.ok(question.solution.steps.length);
     assert.ok(question.sourceRegion);
   });
+});
+
+test('grade-four thinking review queue lists every representative item as pending human review', () => {
+  const report = renderGrade4ThinkingReviewReport();
+  assert.equal((report.match(/^- \[ \] 待人工复核$/gm) || []).length, 36);
+  assert.match(report, /待复核：36 道；已确认：0 道/);
+  assert.match(report, /不代表教师或教研人员已经审核/);
 });
 
 test('content update protocol uses only a newer compatible manifest and otherwise keeps the bundled bank', () => {

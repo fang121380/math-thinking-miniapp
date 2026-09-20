@@ -1,12 +1,12 @@
 module.exports = {
-  version: '2026.09.18.1',
-  updatedAt: '2026-09-18',
+  version: '2026.09.20.1',
+  updatedAt: '2026-09-20',
   minimumAppVersion: '1.0.0',
   updateEndpoint: '',
   releaseNote: {
-    version: '2026.09.18.1',
-    title: '题库已优化',
-    copy: '四年级上册新增估算解释、方法比较、错误分析和逆向推理题，练习会按思维任务重新安排。',
+    version: '2026.09.20.1',
+    title: '四年级题库已校正',
+    copy: '修正乘法估算答案，改进逆向推理、错误分析和验算题，并加强答案自动检查。',
   },
   edition: { id: 'multi', label: '八版本教材' },
   enabledGrades: [1, 2, 3, 4, 5, 6, 7, 8, 9],

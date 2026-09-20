@@ -78,6 +78,13 @@ const answerUnits = [
 const answerUnitPattern = answerUnits.join('|');
 const numericAnswerPattern = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/;
 
+function parseNumericAnswer(value) {
+  const normalized = String(value === undefined || value === null ? '' : value)
+    .trim()
+    .replace(/[\s,，]/g, '');
+  return numericAnswerPattern.test(normalized) ? Number(normalized) : null;
+}
+
 function getQuestionTopicLabel(item, fallback = '') {
   if (!item || typeof item !== 'object') return String(fallback || '');
   const summary = String(item.knowledgeSummary || '');
@@ -1096,6 +1103,14 @@ function estimateTargetStep(value) {
   return null;
 }
 
+function estimateAuditExpression(item) {
+  if (item && item.calculationExpression) return item.calculationExpression;
+  if (!item || item.taskType !== 'estimate_explain') return '';
+  const prompt = String(item.prompt || '').replace(/^估一估[：:]\s*/, '');
+  const match = prompt.match(/^\s*(\d[\d\s,，]*(?:\.\d+)?\s*[×÷*/]\s*\d[\d\s,，]*(?:\.\d+)?)/);
+  return match ? match[1].replace(/[,，]/g, '') : '';
+}
+
 function expectedCalculatedAnswer(item, calculated) {
   const knowledgePoint = String(item.knowledgePoint || '');
   if (String(item.prompt || '').includes('保留两位小数')) {
@@ -1278,11 +1293,12 @@ function auditQuestion(item) {
   if (item && item.examPattern === 'estimate_check') {
     const targetStep = estimateTargetStep(item);
     if (targetStep === null) issues.push('estimate_target_missing');
-    if (item.calculationExpression && targetStep !== null && targetStep !== 'range') {
-      const calculated = evaluateArithmeticExpression(item.calculationExpression);
-      const numericAnswer = Number(item.answer);
+    const expression = estimateAuditExpression(item);
+    if (expression && targetStep !== null && targetStep !== 'range') {
+      const calculated = evaluateArithmeticExpression(expression);
+      const numericAnswer = parseNumericAnswer(item.answer);
       const expected = calculated === null ? null : expectedCalculatedAnswer(item, calculated);
-      if (expected !== null && Number.isFinite(numericAnswer) && Math.abs(expected - numericAnswer) > 1e-9) {
+      if (expected !== null && numericAnswer !== null && Math.abs(expected - numericAnswer) > 1e-9) {
         issues.push('estimate_answer_mismatch');
       }
     }
@@ -1290,7 +1306,7 @@ function auditQuestion(item) {
 
   if (item && item.calculationExpression && item.examPattern !== 'estimate_check') {
     const calculated = evaluateArithmeticExpression(item.calculationExpression);
-    const numericAnswer = Number(item.answer);
+    const numericAnswer = parseNumericAnswer(item.answer);
     const expected = calculated === null ? null : expectedCalculatedAnswer(item, calculated);
     const quotientAndRemainder = quotientAndRemainderFromAnswer(item.answer);
     if (String(item.knowledgePoint || '').endsWith('division_remainder') && quotientAndRemainder) {
@@ -1303,7 +1319,7 @@ function auditQuestion(item) {
         issues.push('remainder_expression_mismatch');
       }
     }
-    if (expected !== null && Number.isFinite(numericAnswer) && Math.abs(expected - numericAnswer) > 1e-9) {
+    if (expected !== null && numericAnswer !== null && Math.abs(expected - numericAnswer) > 1e-9) {
       issues.push('calculation_expression_mismatch');
     }
   }

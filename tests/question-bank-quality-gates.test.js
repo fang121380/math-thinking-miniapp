@@ -4,6 +4,7 @@ const {
   getQuestions,
   diagnosticQuestions,
   practiceQuestions,
+  auditQuestion,
   auditQuestionBankQuality,
   questionMathSignature,
 } = require('../miniprogram/utils/question-bank');
@@ -143,4 +144,38 @@ test('grade-four upper practice adds auditable thinking-task metadata across its
     [...new Set(rows.map((item) => item.taskType))].sort(),
     ['condition_reasoning', 'error_analysis', 'estimate_explain', 'method_compare', 'reverse_reasoning'],
   );
+});
+
+test('grade-four direct estimates use the mathematically nearest declared place value', () => {
+  const rows = practiceQuestions.filter((item) => item.id.startsWith('p-thinking-g4-'));
+  const first = rows.find((item) => item.id === 'p-thinking-g4-multiply-estimate-explain-1');
+  const second = rows.find((item) => item.id === 'p-thinking-g4-multiply-estimate-explain-2');
+
+  assert.equal(first.answer, '8 400');
+  assert.ok(first.options.includes(first.answer));
+  assert.equal(second.answer, '28 900');
+  assert.match(second.solution.steps.join(' '), /28 944.*28 900/);
+  assert.deepEqual(auditQuestion(first), []);
+  assert.deepEqual(auditQuestion(second), []);
+
+  const wrongGroupedAnswer = { ...second, answer: '29 000', calculationExpression: undefined };
+  assert.ok(auditQuestion(wrongGroupedAnswer).includes('estimate_answer_mismatch'));
+});
+
+test('grade-four reverse and error-analysis tasks match the reasoning named in metadata', () => {
+  const byId = new Map(practiceQuestions
+    .filter((item) => item.id.startsWith('p-thinking-g4-'))
+    .map((item) => [item.id, item]));
+  const firstReverse = byId.get('p-thinking-g4-multiply-reverse-1');
+  const contextReverse = byId.get('p-thinking-g4-multiply-reverse-3');
+  const estimateError = byId.get('p-thinking-g4-multiply-error-1');
+  const divisionMethod = byId.get('p-thinking-g4-division-exact-method-1');
+
+  assert.match(firstReverse.prompt, /积.*另一个因数/);
+  assert.equal(firstReverse.answer, '30');
+  assert.match(contextReverse.prompt, /平均每排/);
+  assert.equal(contextReverse.answer, '40');
+  assert.match(estimateError.prompt, /精确积/);
+  assert.equal(estimateError.answer, '把估算结果当成了精确积');
+  assert.equal(divisionMethod.options.filter((option) => /24×39=936/.test(option)).length, 1);
 });

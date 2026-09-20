@@ -6,6 +6,7 @@
     "setup": "node scripts/setup-project.js",
     "test": "node --test --test-concurrency=1 tests/*.test.js",
     "audit:questions": "node scripts/audit-question-bank.js",
+    "review:grade4-thinking": "node docs/tools/generate-grade4-thinking-review-report.js",
     "import:tal-review": "node scripts/import-tal-scq5k.js",
     "prepare:upload": "npm run audit:questions && npm test"
   }
