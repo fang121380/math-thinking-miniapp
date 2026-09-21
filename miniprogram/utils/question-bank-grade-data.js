@@ -386,6 +386,9 @@ function buildItem(grade, topic, type, index, diagnosticSlot) {
       ? [rawValue[0] + rawValue[1] * cycle, rawValue[1]]
       : [rawValue[0] + cycle, rawValue[1]])
     : rawValue;
+  const learnerType = topic.kind === 'concept' && type === 'problem' && /____/.test(String(value && value.prompt || ''))
+    ? 'fill'
+    : type;
   const built = topic.kind === 'money'
     ? moneyItem(topic, value, type, index)
     : topic.kind === 'decimalTenths'
@@ -415,7 +418,7 @@ function buildItem(grade, topic, type, index, diagnosticSlot) {
     unit: topic.unit,
     knowledgePoint: topic.key,
     ability: topic.ability,
-    type,
+    type: learnerType,
     difficulty: diagnosticSlot ? [1, 1, 2, 3][index] : DIFFICULTY_PATTERN[index],
     diagnosticSlot,
     ...built,

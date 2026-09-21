@@ -93,6 +93,12 @@ test('grade-six concept practice gives executable fraction, circle, and negative
   });
 });
 
+test('primary concept blanks use fill interaction rather than a word-problem field', () => {
+  const blanks = practiceQuestions.filter((question) => question.grade <= 6 && /____/.test(question.prompt));
+  assert.ok(blanks.length > 0);
+  assert.ok(blanks.every((question) => question.type !== 'problem'));
+});
+
 test('content update protocol uses only a newer compatible manifest and otherwise keeps the bundled bank', () => {
   const bundled = { version: '2026.07.22.1', minimumAppVersion: '1.0.0', contentUrl: '' };
   assert.deepEqual(decideContentUpdate(bundled, { version: '2026.07.22.2', minimumAppVersion: '1.0.0', contentUrl: 'https://example.invalid/bank.json' }, '1.0.0'), {
