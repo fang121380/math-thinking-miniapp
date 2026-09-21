@@ -62,7 +62,7 @@ test('lower-primary concept practice explains an observable action instead of a 
   const ids = [
     'p-g1-clock_reading-5', 'p-g1-clock_reading-6',
     'p-g1-shape_recognition-5', 'p-g1-shape_recognition-6',
-    'p-g1-length_compare-6', 'p-g2-number_within_10000-5',
+    'p-g1-length_compare-5', 'p-g1-length_compare-6', 'p-g2-number_within_10000-5',
     'p-g2-number_within_10000-6', 'p-g2-length_unit-5',
     'p-g2-length_unit-6', 'p-g2-angle_right-5', 'p-g2-angle_right-6',
   ];

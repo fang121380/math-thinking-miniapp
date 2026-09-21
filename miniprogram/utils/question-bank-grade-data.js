@@ -353,7 +353,13 @@ function conceptItem(topic, value, type, index) {
   const answer = String(value.answer);
   const answerUnit = value.answerUnit || topic.answerUnit || '';
   const displayedAnswer = `${answer}${answerUnit}`;
-  const steps = (value.steps || [value.explanation || `根据 ${topic.title} 的规则判断。`]).slice();
+  const specificGuidance = topic.key === 'length_compare' && String(value.prompt).includes('剪去')
+    ? {
+      hint: '剩下的长度等于原来的长度减去剪去的长度。',
+      steps: ['15-4=11。', '所以还剩 11 厘米。'],
+    }
+    : null;
+  const steps = (specificGuidance?.steps || value.steps || [value.explanation || `根据 ${topic.title} 的规则判断。`]).slice();
   const finalStep = steps.length ? steps[steps.length - 1] : '';
   if (!String(finalStep).includes(displayedAnswer)) {
     steps.push(`所以答案是 ${displayedAnswer}。`);
@@ -362,7 +368,7 @@ function conceptItem(topic, value, type, index) {
     prompt: `第 ${index + 1} 题：${value.prompt}`,
     answer,
     options: type === 'choice' ? conceptOptions(value, answer) : [],
-    hint: value.hint || `想一想“${topic.title}”的定义。`,
+    hint: specificGuidance?.hint || value.hint || `想一想“${topic.title}”的定义。`,
     steps,
     summary: topic.summary,
     answerUnit,

@@ -19,7 +19,7 @@ const { answersEquivalent, formatAnswerWithUnit } = require('../miniprogram/util
 const { textbookOptions } = require('../miniprogram/utils/textbook-catalog');
 
 test('question bank manifest records version, curriculum scope, and original provenance', () => {
-  assert.equal(questionBankManifest.version, '2026.09.20.4');
+  assert.equal(questionBankManifest.version, '2026.09.21.1');
   assert.equal(questionBankManifest.updatedAt, '2026-09-20');
   assert.equal(questionBankManifest.edition.id, 'multi');
   assert.deepEqual(questionBankManifest.enabledGrades, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
