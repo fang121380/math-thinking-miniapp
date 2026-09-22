@@ -179,3 +179,32 @@ test('grade-four reverse and error-analysis tasks match the reasoning named in m
   assert.equal(estimateError.answer, '把估算结果当成了精确积');
   assert.equal(divisionMethod.options.filter((option) => /24×39=936/.test(option)).length, 1);
 });
+
+test('grade-four thinking prompts have one gradable answer and consistent estimate operations', () => {
+  const byId = new Map(practiceQuestions
+    .filter((item) => item.id.startsWith('p-thinking-g4-'))
+    .map((item) => [item.id, item]));
+  const multiplyError = byId.get('p-thinking-g4-multiply-error-2');
+  assert.match(multiplyError.prompt, /309×28≈300×30=900/);
+  assert.equal(multiplyError.answer, '0');
+  assert.match(multiplyError.solution.steps.join(' '), /300×30=9 000/);
+
+  ['p-thinking-g4-division-reverse-1', 'p-thinking-g4-division-reverse-2'].forEach((id) => {
+    const question = byId.get(id);
+    assert.match(question.prompt, /按.*估计.*大约/);
+    assert.match(question.solution.steps.join(' '), /不一定恰好等于/);
+  });
+  [
+    'p-thinking-g4-division-method-compare-3',
+    'p-thinking-g4-division-error-3',
+    'p-thinking-g4-multiply-method-compare-3',
+    'p-thinking-g4-division-exact-explain-3',
+    'p-thinking-g4-division-exact-method-3',
+    'p-thinking-g4-division-exact-error-3',
+  ].forEach((id) => assert.doesNotMatch(byId.get(id).prompt, /为什么|写出理由|说明理由|怎样检查答案|判断并改正/));
+  assert.equal(byId.get('p-thinking-g4-division-exact-method-2').taskType, 'condition_reasoning');
+  assert.equal(byId.get('p-thinking-g4-division-exact-error-3').answer, '2');
+  const exactError = byId.get('p-thinking-g4-division-exact-error-1');
+  assert.match(exactError.prompt, /检验/);
+  assert.equal(exactError.options.filter((option) => /计算24×3/.test(option)).length, 1);
+});

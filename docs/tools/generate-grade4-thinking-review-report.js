@@ -1,6 +1,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { practiceQuestions } = require('../../miniprogram/utils/question-bank');
+const manifest = require('../../miniprogram/utils/question-bank-manifest');
 
 const OUTPUT_PATH = path.join(__dirname, '..', 'qa', '2026-09-20-grade4-thinking-review-queue.md');
 
@@ -11,7 +12,7 @@ function renderGrade4ThinkingReviewReport(questions = practiceQuestions) {
   const lines = [
     '# 四年级上册思维题人工复核队列',
     '',
-    '生成日期：2026-09-20。范围：人教版四年级上册 36 道代表题。',
+    `首次建档：2026-09-20；题面版本：${manifest.version}。范围：人教版四年级上册 36 道代表题。`,
     '',
     '> 本文件由脚本生成，是待人工复核队列，不代表教师或教研人员已经审核。勾选结果应由实际复核人员填写。',
     '',
@@ -51,6 +52,9 @@ function renderGrade4ThinkingReviewReport(questions = practiceQuestions) {
 }
 
 function writeGrade4ThinkingReviewReport(outputPath = OUTPUT_PATH) {
+  if (fs.existsSync(outputPath) && /^- \[[xX]\]/m.test(fs.readFileSync(outputPath, 'utf8'))) {
+    throw new Error('复核队列已有人工勾选，请先保存复核结果，再更新题面。');
+  }
   const report = renderGrade4ThinkingReviewReport();
   fs.writeFileSync(outputPath, report);
   return outputPath;
