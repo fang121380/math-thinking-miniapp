@@ -208,3 +208,24 @@ test('grade-four thinking prompts have one gradable answer and consistent estima
   assert.match(exactError.prompt, /检验/);
   assert.equal(exactError.options.filter((option) => /计算24×3/.test(option)).length, 1);
 });
+
+test('static primary hints state the next operation for common word problems', () => {
+  const byId = new Map(practiceQuestions.map((item) => [item.id, item]));
+  const expected = {
+    'p-fill-line-relationship-1': /是否会相交.*平行线/,
+    'p-problem-rectangle-perimeter-2': /相加.*乘 2/,
+    'p-problem-rectangle-perimeter-4': /相加.*乘 2/,
+    'p-problem-arrangement-2': /7÷3.*向上取整.*12 分钟/,
+    'p-problem-arrangement-3': /同时洗.*一轮 5 分钟/,
+    'p-problem-arrangement-4': /14÷6.*向上取整.*15 分钟/,
+    'p-problem-average-2': /相加.*除以 3/,
+    'p-problem-average-4': /相加.*除以 4/,
+    'p-thinking-g4-division-estimate-explain-3': /9×80=720.*9×90=810.*725/,
+  };
+  Object.entries(expected).forEach(([id, pattern]) => {
+    const question = byId.get(id);
+    assert.ok(question, id);
+    assert.match(question.hint, pattern, id);
+    assert.ok(question.solution.steps.length >= 2, id);
+  });
+});

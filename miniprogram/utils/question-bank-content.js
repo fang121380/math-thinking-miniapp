@@ -99,7 +99,7 @@ function thinkingItem(config) {
 const thinkingPracticeQuestions = [
   thinkingItem({ id: 'p-thinking-g4-division-estimate-explain-1', knowledgePoint: 'division_estimation', type: 'choice', difficulty: 2, taskType: 'estimate_explain', calculationExpression: '287 ÷ 6', prompt: '287 ÷ 6 的商最接近哪个整十数？', options: ['30', '40', '50', '60'], answer: '50', hint: '先想 6×40 和 6×50 分别是多少。', summary: '先判断商所在的两个整十数，再比较距离。', steps: ['287÷6≈47.8。', '47.8 离 50 更近，所以商最接近 50。'], commonMistakes: ['round_only_dividend', 'read_quotient_as_exact'] }),
   thinkingItem({ id: 'p-thinking-g4-division-estimate-explain-2', knowledgePoint: 'division_estimation', type: 'fill', difficulty: 2, taskType: 'estimate_explain', calculationExpression: '398 ÷ 8', prompt: '398 ÷ 8 的商最接近 ____（填整十数）。', answer: '50', hint: '8×50=400，和 398 很接近。', summary: '用接近的乘法检验估算结果。', steps: ['8×50=400。', '398 与 400 相差 2，所以商最接近 50。'], commonMistakes: ['ignore_divisor', 'treat_estimate_as_exact'] }),
-  thinkingItem({ id: 'p-thinking-g4-division-estimate-explain-3', knowledgePoint: 'division_estimation', type: 'problem', difficulty: 2, taskType: 'estimate_explain', prompt: '有 725 本书，平均放进 9 个书架。先估一估：每个书架大约放多少本？', answer: '80', hint: '想一想 9×80 和 9×90。', summary: '先估计每架书的本数，再用乘法检查范围。', steps: ['725÷9≈80.6。', '80.6 最接近 80，所以每个书架大约放 80 本。'], commonMistakes: ['round_only_dividend', 'ignore_context'] }),
+  thinkingItem({ id: 'p-thinking-g4-division-estimate-explain-3', knowledgePoint: 'division_estimation', type: 'problem', difficulty: 2, taskType: 'estimate_explain', prompt: '有 725 本书，平均放进 9 个书架。先估一估：每个书架大约放多少本？', answer: '80', hint: '先算 9×80=720 和 9×90=810，再看 725 更接近哪一个。', summary: '先估计每架书的本数，再用乘法检查范围。', steps: ['725÷9≈80.6。', '80.6 最接近 80，所以每个书架大约放 80 本。'], commonMistakes: ['round_only_dividend', 'ignore_context'] }),
   thinkingItem({ id: 'p-thinking-g4-division-method-compare-1', knowledgePoint: 'division_estimation', type: 'choice', difficulty: 3, taskType: 'method_compare', prompt: '估算 287 ÷ 6，下面哪种方法得到的结果最接近实际商？（估到整十数）', options: ['300÷6=50', '280÷7=40', '200÷6≈30', '287÷10≈30'], answer: '300÷6=50', hint: '先比较每种方法得到的数与 287÷6 的距离。', summary: '估算方法要同时考虑被除数和除数。', steps: ['287÷6≈47.8。', '50 比 40、30 都更接近 47.8，所以 300÷6=50 更合理。'], commonMistakes: ['choose_unchecked_method', 'round_both_numbers_randomly'] }),
   thinkingItem({ id: 'p-thinking-g4-division-method-compare-2', knowledgePoint: 'division_estimation', type: 'fill', difficulty: 3, taskType: 'method_compare', prompt: '小明把 462 ÷ 9 估成 500 ÷ 10=50。这个估算方法得到的商最接近 ____（估到整十数）。', answer: '50', hint: '先判断 500÷10 是否容易计算，再说明它为什么接近原题。', summary: '估算可以把两个数变成好算的数，但要保持商的数量级。', steps: ['500÷10=50。', '462÷9≈51.3，所以估算结果 50 合理。'], commonMistakes: ['round_both_numbers_randomly', 'ignore_magnitude'] }),
   thinkingItem({ id: 'p-thinking-g4-division-method-compare-3', knowledgePoint: 'division_estimation', type: 'problem', difficulty: 3, taskType: 'method_compare', prompt: '学校要把 598 本练习册平均分给 7 个班。小林估成 600÷7，小华估成 560÷7。谁的估算最接近原题？', answer: '小林', hint: '比较 598 与 600、560 的距离。', summary: '比较估算方法时，要看改动后的数离原数有多远。', steps: ['598 离 600 只有 2，离 560 有 38。', '所以小林的估算更接近原题。'], commonMistakes: ['choose_unchecked_method', 'compare_divisors_only'] }),
@@ -169,7 +169,7 @@ const supplementalPracticeQuestions = [
     prefix: 'line-relationship', term: '上册', unit: '平行四边形和梯形', knowledgePoint: 'line_relationship', ability: 'geometry',
     summary: '根据直线是否相交和交角判断位置关系。', mistakes: ['parallel_perpendicular_confusion', 'right_angle_confusion'],
     rows: [
-      ['同一平面内，两条永不相交的直线叫 ____ 线。', '平行', '想一想铁轨的两条边。', ['永不相交的两条直线互相平行。']],
+      ['同一平面内，两条永不相交的直线叫 ____ 线。', '平行', '先看两条直线是否会相交；永不相交的就是平行线。', ['永不相交的两条直线互相平行。', '所以填“平行”。']],
       ['两条直线相交成直角时，这两条直线互相 ____。', '垂直', '直角是 90°。', ['相交成直角的两条直线互相垂直。']],
       ['长方形相邻的两条边互相 ____。', '垂直', '长方形的四个角都是直角。', ['相邻边交成直角。', '所以相邻边互相垂直。']],
       ['梯形只有一组对边互相 ____。', '平行', '注意是“只有一组”。', ['梯形的一组对边平行。']],
@@ -230,9 +230,9 @@ const supplementalPracticeQuestions = [
     summary: '长方形周长等于两条长和两条宽的和。', mistakes: ['perimeter_area_confusion', 'calculation_error'],
     rows: [
       ['一张长方形卡纸长 18 厘米、宽 12 厘米，四周贴彩带需要多少厘米？', '60', '周长要把长和宽各算两次。', ['(18+12)×2=60（厘米）。']],
-      ['操场花坛长 35 米、宽 15 米，围一圈护栏需要多少米？', '100', '先求长加宽。', ['35+15=50。', '50×2=100（米）。']],
+      ['操场花坛长 35 米、宽 15 米，围一圈护栏需要多少米？', '100', '把长和宽相加，再乘 2 求一周的长度。', ['35+15=50。', '50×2=100（米）。']],
       ['长方形相框长 26 厘米、宽 14 厘米，边框长多少厘米？', '80', '边框长度就是周长。', ['(26+14)×2=80（厘米）。']],
-      ['一块长方形布长 40 分米、宽 18 分米，锁边一周需要多少分米？', '116', '用周长公式。', ['40+18=58。', '58×2=116（分米）。']],
+      ['一块长方形布长 40 分米、宽 18 分米，锁边一周需要多少分米？', '116', '把长和宽相加，再乘 2 求一周的长度。', ['40+18=58。', '58×2=116（分米）。']],
     ],
   }),
   ...choiceGroup({
@@ -260,9 +260,9 @@ const supplementalPracticeQuestions = [
     summary: '安排事情时让能同时进行的事情同时进行。', mistakes: ['sequential_thinking', 'ignore_parallel_tasks'],
     rows: [
       ['小敏洗杯子 2 分钟、烧水 6 分钟、泡茶 1 分钟。先洗杯子再烧水，泡茶要等水开，至少几分钟？', '9', '不能同时进行的步骤要相加。', ['洗杯子 2 分钟。', '烧水 6 分钟。', '泡茶 1 分钟。', '共 2+6+1=9 分钟。']],
-      ['一口锅一次能煮 3 个玉米，每锅要 12 分钟。煮 7 个玉米至少几分钟？', '36', '要煮几锅？', ['7 个玉米需要 3 锅。', '3×12=36 分钟。']],
-      ['小军同时洗 4 双袜子，每双都要 5 分钟。洗 4 双袜子至少几分钟？', '5', '可以同时洗。', ['4 双袜子同时洗。', '只需要 5 分钟。']],
-      ['烤箱一次烤 6 个面包，烤一盘需 15 分钟。烤 14 个面包至少几分钟？', '45', '先确定盘数。', ['14 个面包需要 3 盘。', '3×15=45 分钟。']],
+      ['一口锅一次能煮 3 个玉米，每锅要 12 分钟。煮 7 个玉米至少几分钟？', '36', '用 7÷3 向上取整求锅数，再乘每锅 12 分钟。', ['7 个玉米需要 3 锅。', '3×12=36 分钟。']],
+      ['小军同时洗 4 双袜子，每双都要 5 分钟。洗 4 双袜子至少几分钟？', '5', '因为 4 双可以同时洗，所以只需计算一轮 5 分钟。', ['4 双袜子同时洗。', '只需要 5 分钟。']],
+      ['烤箱一次烤 6 个面包，烤一盘需 15 分钟。烤 14 个面包至少几分钟？', '45', '用 14÷6 向上取整求盘数，再乘每盘 15 分钟。', ['14 个面包需要 3 盘。', '3×15=45 分钟。']],
     ],
   }),
   ...choiceGroup({
@@ -280,9 +280,9 @@ const supplementalPracticeQuestions = [
     summary: '平均数等于总数除以份数。', mistakes: ['divide_by_wrong_count', 'sum_error'],
     rows: [
       ['四天收集树叶数是 18、22、26、30 片，平均每天收集多少片？', '24', '先求四天总数。', ['18+22+26+30=96。', '96÷4=24（片）。']],
-      ['三次口算得分是 84、90、96 分，平均分是多少？', '90', '总分除以次数。', ['84+90+96=270。', '270÷3=90（分）。']],
+      ['三次口算得分是 84、90、96 分，平均分是多少？', '90', '把三次分数相加，再除以 3 求平均分。', ['84+90+96=270。', '270÷3=90（分）。']],
       ['五个小组分别得到 12、16、18、20、24 颗星，平均每组多少颗？', '18', '共有 5 个小组。', ['12+16+18+20+24=90。', '90÷5=18（颗）。']],
-      ['四辆车运书本数是 35、40、45、50 本，平均每辆运多少本？', '42.5', '先求总本数。', ['35+40+45+50=170。', '170÷4=42.5（本）。']],
+      ['四辆车运书本数是 35、40、45、50 本，平均每辆运多少本？', '42.5', '把四辆车运的本数相加，再除以 4 求平均数。', ['35+40+45+50=170。', '170÷4=42.5（本）。']],
     ],
   }),
   ...fillGroup({

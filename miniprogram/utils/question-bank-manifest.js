@@ -1,12 +1,12 @@
 module.exports = {
-  version: '2026.09.22.1',
+  version: '2026.09.22.2',
   updatedAt: '2026-09-22',
   minimumAppVersion: '1.0.0',
   updateEndpoint: '',
   releaseNote: {
-    version: '2026.09.22.1',
-    title: '四年级思维题题意更清楚',
-    copy: '修正估算、除法逆推和验算题的歧义，题目要求与判分保持一致。',
+    version: '2026.09.22.2',
+    title: '基础题提示更可操作',
+    copy: '把周长、平均数、分批处理和直线关系题的提示改为明确的计算步骤。',
   },
   edition: { id: 'multi', label: '八版本教材' },
   enabledGrades: [1, 2, 3, 4, 5, 6, 7, 8, 9],
