@@ -229,3 +229,21 @@ test('static primary hints state the next operation for common word problems', (
     assert.ok(question.solution.steps.length >= 2, id);
   });
 });
+
+test('two-step primary hints name both operations', () => {
+  const byId = new Map(practiceQuestions.map((item) => [item.id, item]));
+  const expected = {
+    'p-problem-pattern-1': /10÷4.*向上取整.*8 分钟/,
+    'p-problem-arrangement-1': /2、6、1 分钟相加/,
+    'p-problem-division-variant-1': /9×28.*除以 14/,
+    'p-problem-division-variant-4': /12×35.*除以 15/,
+    'p-problem-average-1': /相加.*除以 4 天/,
+    'p-problem-average-3': /相加.*除以 5 组/,
+  };
+  Object.entries(expected).forEach(([id, pattern]) => {
+    const question = byId.get(id);
+    assert.ok(question, id);
+    assert.match(question.hint, pattern, id);
+    assert.ok(question.solution.steps.length >= 2, id);
+  });
+});
